@@ -1,0 +1,21 @@
+GENERAL NOTES
+
+- moon landing
+- simulate guiding the moon lander on moon. start at some polstion above surface & land a little hwile away (h=0) and have limited speed (v < vmax) and limited fuel. have gravity, no drag. limited amount of fuel. at any pt in time, can direct nozzle to down (boost up) or one side or the other (or choose not to fire). every time you fire, consume some amt of fuel. can issue commands every once in a while (3-4 imes / sec?)
+- in between, in the intervals (say 0.3 sec) have set the conditions for system of diff eqs (containing x, y, z, dx, dy, etc, mass). should carry out soln in small steps. 
+- needs to have a visual. can be as simple as an array containing plotted points leading to landing pad (draw pad). 
+- odeint, solve_idp (initial val problem) - since it changes every time, will have to solve for every time & update inputs as you go
+- interactive - put L R U N etc
+
+- moving parts
+- calculate force of gravity based on current mass & height 
+- rxn time of pilot, rotation time of thruster
+- need to keep track of: 
+-- dx
+-- dy
+-- dt
+-- dm
+-- dv
+-- dtheta - (quantized - 3 directions)
+-- d fuel (if field=0 crash)
+- 
