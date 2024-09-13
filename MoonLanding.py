@@ -20,6 +20,8 @@ Mass = 5 #Initial mass, kg
 BurnRate = 5 #Fuel burn rate, kg/s
 pos = np.array([0,950])
 g = 1.62 # m/s^2
+EngineIsFiring = False
+EngineOrientation = "D"
 
 
 # Create the ship
