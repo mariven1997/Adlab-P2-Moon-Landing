@@ -45,13 +45,13 @@ while run:
     
     key = pg.key.get_pressed()
     if key[pg.K_s] == True:
-        ship.move_ip(0,-1)
-    elif key[pg.K_w] == True:
-        ship.move_ip(0,1)
-    elif key[pg.K_a] == True:
-        ship.move_ip(1,0)
-    elif key[pg.K_d] == True:
-        ship.move_ip(-1,0)
+        shiprect.move_ip(0,-1)
+    if key[pg.K_w] == True:
+        shiprect.move_ip(0,1)
+    if key[pg.K_a] == True:
+        shiprect.move_ip(1,0)
+    if key[pg.K_d] == True:
+        shiprect.move_ip(-1,0)
     
     for event in pg.event.get():
         if key[pg.K_p] == True:
