@@ -56,6 +56,9 @@ while run:
     pg.draw.rect(screen, (50,50,50), shiprect)
     screen.blit(shipimage, shiprect)
     
+    #Tring to make it plot a parabola (calculated elsewhere) that shows projected trajectory
+    #pg.draw.lines(screen, (50,50,50), False, ((1,1), (10, 20), (75,300)))
+    
     key = pg.key.get_pressed()
     if key[pg.K_s] == True:
         #S key should rotate the engine to face DOWN
