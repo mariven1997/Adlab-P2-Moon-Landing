@@ -11,7 +11,13 @@ SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 1000
 
 
-
+# Establishing Variables
+X = -10 #Initial Position, m
+Y = 30 #Inital Altitude, m
+Vx = 0 #Initial velocity, m/s
+Vy = 0 #Initial velocity, m/s
+Mass = 5 #Initial mass, kg
+BurnRate = 5 #Fuel burn rate, kg/s
 pos = np.array([475,475])
 g = 1.62 # m/s^2
 
@@ -34,13 +40,7 @@ shiprect.topleft = (50, 50)
 # Background
 # background_img = pg.image.load('').convert_alpha    # This will be where we load whatever background image of the moon we get
 
-# Establishing Variables
-X = -10 #Initial Position, m
-Y = 30 #Inital Altitude, m
-Vx = 0 #Initial velocity, m/s
-Vy = 0 #Initial velocity, m/s
-Mass = 5 #Initial mass, kg
-BurnRate = 5 #Fuel burn rate, kg/s
+
 
 
 run = True
