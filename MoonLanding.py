@@ -23,9 +23,13 @@ ship = pg.Rect((pos[0],pos[1],50,50))
 # Create the screen
 screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pg.display.set_caption('Moon Lander')
+
+# Establishes ship as a rectangle and also gives it a graphics
 shipimage = pg.image.load("TempImage.png").convert_alpha()
 shiprect = shipimage.get_rect()
 shiprect.topleft = (50, 50)
+
+
 # load images
 # Background
 # background_img = pg.image.load('').convert_alpha    # This will be where we load whatever background image of the moon we get
