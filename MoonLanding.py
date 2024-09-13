@@ -10,19 +10,20 @@ pg.init()
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 1000
 
-shipimage = pg.image.load("TempImage.png").convert_alpha()
+
 
 pos = np.array([475,475])
 
 # Create the ship
 ship = pg.Rect((pos[0],pos[1],50,50))
-shiprect = shipimage.get_rect()
+
 
 # Create the screen
 screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pg.display.set_caption('Moon Lander')
-
-
+shipimage = pg.image.load("TempImage.png").convert_alpha()
+shiprect = shipimage.get_rect()
+shiprect.topleft = (50, 50)
 # load images
 # Background
 # background_img = pg.image.load('').convert_alpha    # This will be where we load whatever background image of the moon we get
@@ -40,6 +41,7 @@ while run:
     # Place the ship
     pg.draw.rect(screen, (50,50,50), ship)
     pg.draw.rect(screen, (50,50,50), shiprect)
+    screen.blit(shipimage, shiprect)
     
     key = pg.key.get_pressed()
     if key[pg.K_s] == True:
