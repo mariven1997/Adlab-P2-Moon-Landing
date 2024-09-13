@@ -18,12 +18,12 @@ Vx = 0 #Initial velocity, m/s
 Vy = 0 #Initial velocity, m/s
 Mass = 5 #Initial mass, kg
 BurnRate = 5 #Fuel burn rate, kg/s
-pos = np.array([475,475])
+pos = np.array([0,950])
 g = 1.62 # m/s^2
 
 
 # Create the ship
-ship = pg.Rect((pos[0],pos[1],50,50))
+moon = pg.Rect((pos[0],pos[1],50,50))
 
 
 # Create the screen
@@ -49,7 +49,7 @@ while run:
     screen.fill((0,0,0))
     
     # Place the ship
-    pg.draw.rect(screen, (50,50,50), ship)
+    pg.draw.rect(screen, (50,50,50), moon)
     pg.draw.rect(screen, (50,50,50), shiprect)
     screen.blit(shipimage, shiprect)
     
