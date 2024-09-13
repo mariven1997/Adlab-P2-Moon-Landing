@@ -34,7 +34,13 @@ shiprect.topleft = (50, 50)
 # Background
 # background_img = pg.image.load('').convert_alpha    # This will be where we load whatever background image of the moon we get
 
-
+# Establishing Variables
+X = -10 #Initial Position, m
+Y = 30 #Inital Altitude, m
+Vx = 0 #Initial velocity, m/s
+Vy = 0 #Initial velocity, m/s
+Mass = 5 #Initial mass, kg
+BurnRate = 5 #Fuel burn rate, kg/s
 
 
 
