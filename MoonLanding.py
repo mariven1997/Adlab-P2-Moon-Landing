@@ -24,8 +24,8 @@ EngineIsFiring = False
 EngineOrientation = "D"
 
 
-# Create the ship
-moon = pg.Rect((pos[0],pos[1],50,50))
+# Create the moon
+moon = pg.Rect((pos[0],pos[1],1000,100))
 
 
 # Create the screen
@@ -50,8 +50,9 @@ while run:
     
     screen.fill((0,0,0))
     
+    # Place the moon
+    pg.draw.rect(screen, (120,120,120), moon)
     # Place the ship
-    pg.draw.rect(screen, (50,50,50), moon)
     pg.draw.rect(screen, (50,50,50), shiprect)
     screen.blit(shipimage, shiprect)
     
