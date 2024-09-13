@@ -13,6 +13,8 @@ SCREEN_HEIGHT = 1000
 
 
 pos = np.array([475,475])
+g = 1.62 # m/s^2
+
 
 # Create the ship
 ship = pg.Rect((pos[0],pos[1],50,50))
