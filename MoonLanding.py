@@ -49,7 +49,7 @@ while run:
         ship.move_ip(-1,0)
     
     for event in pg.event.get():
-        if event.type == pg.QUIT:
+        if key[pg.K_p] == True:
             run = False
             
             
