@@ -80,7 +80,9 @@ while run:
             shiprect.move_ip(MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate), MotionY(Vy, Thrust, TimeStep, Mass, -1*BurnRate))
             Mass += -1*BurnRate*TimeStep
             Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep
-            LoopBuddy += TimeStep
+            LoopBuddy += TimeStep    
+            pg.display.update()
+        t.sleep(0.25)
     if key[pg.K_a] == True:
         LoopBuddy = 0
         while LoopBuddy <= TurnLength:
@@ -89,7 +91,9 @@ while run:
             Mass += -1*BurnRate*TimeStep
             Vx = Vx - Thrust*TimeStep/Mass
             Vy = Vy - g*TimeStep
-            LoopBuddy += TimeStep
+            LoopBuddy += TimeStep  
+            pg.display.update()
+        t.sleep(0.25)
     if key[pg.K_d] == True:
         LoopBuddy = 0
         while LoopBuddy <= TurnLength:
@@ -98,14 +102,18 @@ while run:
             Mass += -1*BurnRate*TimeStep
             Vx = Vx + Thrust*TimeStep/Mass
             Vy = Vy - g*TimeStep
-            LoopBuddy += TimeStep
+            LoopBuddy += TimeStep     
+            pg.display.update()
+        t.sleep(0.25)
     if key[pg.K_w] == True:
         LoopBuddy = 0
         while LoopBuddy <= TurnLength:
             # W key should wait
             shiprect.move_ip(MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate), MotionY(Vy, 0, TimeStep, Mass, 0))
             Vy = Vy - g*TimeStep
-            LoopBuddy += TimeStep
+            LoopBuddy += TimeStep     
+            pg.display.update()
+        t.sleep(0.25)
     
     
     for event in pg.event.get():
