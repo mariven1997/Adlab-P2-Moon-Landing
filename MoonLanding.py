@@ -17,7 +17,7 @@ X = -10 #Initial Position, m
 Y = 30*(1. + 4.*n%5) #Inital Altitude, m
 Vx = 0 #Initial velocity, m/s
 Vy = 0 #Initial velocity, m/s
-Mass = (1 + 0.1*n%5)*10**4 #Initial mass, kg
+DryMass = (1 + 0.1*n%5)*10**4 #Initial mass, kg
 FMass = 4*(1 + 0.1*n%6)*10**3 #Initial mass of the fuel
 Thrust = 4.8*(1 + 0.05*n%4)*10**4 #Thrust supplied by the engine
 BurnRate = 5 #Fuel burn rate, kg/s
@@ -28,7 +28,7 @@ EngineOrientation = "D"
 TimeStep = 0.001
 TurnLength = 0.25
 PixelsPerMeter = 30
-
+Mass = DryMass + FMass
 
 # Create the moon
 moon = pg.Rect((pos[0],pos[1],1000,100))
@@ -78,7 +78,7 @@ while run:
         while LoopBuddy <= TurnLength:        
             #S key should rotate the engine to face DOWN
             shiprect.move_ip(MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate), MotionY(Vy, Thrust, TimeStep, Mass, -1*BurnRate))
-            Mass += -1*BurnRate
+            Mass += -1*BurnRate*TimeStep
             Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep
             LoopBuddy += TimeStep
     if key[pg.K_a] == True:
@@ -86,7 +86,7 @@ while run:
         while LoopBuddy <= TurnLength:
             #A key should rotate the engine to face RIGHT
             shiprect.move_ip((MotionX(Vx, -1*Thrust, TimeStep, Mass, -1*BurnRate), MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)))
-            Mass += -1*BurnRate
+            Mass += -1*BurnRate*TimeStep
             Vx = Vx - Thrust*TimeStep/Mass
             Vy = Vy - g*TimeStep
             LoopBuddy += TimeStep
@@ -95,7 +95,7 @@ while run:
         while LoopBuddy <= TurnLength:
             #D key should rotate the engine to face LEFT
             shiprect.move_ip((MotionX(Vx, Thrust, TimeStep, Mass, -1*BurnRate), MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)))
-            Mass += -1*BurnRate
+            Mass += -1*BurnRate*TimeStep
             Vx = Vx + Thrust*TimeStep/Mass
             Vy = Vy - g*TimeStep
             LoopBuddy += TimeStep
