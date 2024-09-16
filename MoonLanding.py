@@ -26,6 +26,7 @@ g = 1.62 # m/s^2
 EngineIsFiring = False
 EngineOrientation = "D"
 TimeStep = 0.001
+TurnLength = 0.25
 
 
 # Create the moon
