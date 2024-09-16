@@ -78,7 +78,7 @@ while run:
             #S key should rotate the engine to face DOWN
             shiprect.move_ip(MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate), MotionY(Vy, Thrust, TimeStep, Mass, -1*BurnRate))
             Mass += -1*BurnRate
-            Vy = Vy + Thrust*TimeStep - g*TimeStep
+            Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep
             LoopBuddy += TimeStep
     if key[pg.K_a] == True:
         LoopBuddy = 0
@@ -86,7 +86,7 @@ while run:
             #A key should rotate the engine to face RIGHT
             shiprect.move_ip((MotionX(Vx, -1*Thrust, TimeStep, Mass, -1*BurnRate), MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)))
             Mass += -1*BurnRate
-            Vx = Vx - Thrust*TimeStep
+            Vx = Vx - Thrust*TimeStep/Mass
             Vy = Vy - g*TimeStep
             LoopBuddy += TimeStep
     if key[pg.K_d] == True:
@@ -95,7 +95,7 @@ while run:
             #D key should rotate the engine to face LEFT
             shiprect.move_ip((MotionX(Vx, Thrust, TimeStep, Mass, -1*BurnRate), MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)))
             Mass += -1*BurnRate
-            Vx = Vx + Thrust*TimeStep
+            Vx = Vx + Thrust*TimeStep/Mass
             Vy = Vy - g*TimeStep
             LoopBuddy += TimeStep
     if key[pg.K_w] == True:
