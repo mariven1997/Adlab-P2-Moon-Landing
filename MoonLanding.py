@@ -12,11 +12,14 @@ SCREEN_HEIGHT = 800
 
 
 # Establishing Variables
+n = 13 #Letter value of last name (13 for m and 15 for o)
 X = -10 #Initial Position, m
-Y = 30 #Inital Altitude, m
+Y = 30*(1. + 4.*n%5) #Inital Altitude, m
 Vx = 0 #Initial velocity, m/s
 Vy = 0 #Initial velocity, m/s
-Mass = 5 #Initial mass, kg
+Mass = (1 + 0.1*n%5)*10**4 #Initial mass, kg
+FMass = 4*(1 + 0.1*n%6)*10**3 #Initial mass of the fuel
+Thrust = 4.8*(1 + 0.05*n%4)*10**4 #Thrust supplied by the engine
 BurnRate = 5 #Fuel burn rate, kg/s
 pos = np.array([0,700])
 g = 1.62 # m/s^2
