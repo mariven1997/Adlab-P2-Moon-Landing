@@ -112,6 +112,6 @@ while run:
         if key[pg.K_p] == True:
             run = False
             
-    t.sleep(0.25)     
+    t.sleep(0.003)     
     pg.display.update()
 pg.quit()
