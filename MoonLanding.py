@@ -75,9 +75,18 @@ while run:
     key = pg.key.get_pressed()
     if key[pg.K_s] == True:
         LoopBuddy = 0
+        delX = 0
+        delY = 0
         while LoopBuddy <= TurnLength:        
             #S key should rotate the engine to face DOWN
-            shiprect.move_ip(MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate), MotionY(Vy, Thrust, TimeStep, Mass, -1*BurnRate))
+            delX += MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate)
+            delY += MotionY(Vy, Thrust, TimeStep, Mass, -1*BurnRate)
+            if abs(delX)>=1:
+                shiprect.move_ip(-delX,0)
+                delX = 0
+            if abs(delY)>=1:
+                shiprect.move_ip(0,-delY)
+                delY = 0
             Mass += -1*BurnRate*TimeStep
             Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep
             LoopBuddy += TimeStep    
@@ -85,9 +94,18 @@ while run:
         t.sleep(0.25)
     if key[pg.K_a] == True:
         LoopBuddy = 0
+        delX = 0
+        delY = 0
         while LoopBuddy <= TurnLength:
             #A key should rotate the engine to face RIGHT
-            shiprect.move_ip((MotionX(Vx, -1*Thrust, TimeStep, Mass, -1*BurnRate), MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)))
+            delX += MotionX(Vx, -1*Thrust, TimeStep, Mass, -1*BurnRate)
+            delY += MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)
+            if abs(delX)>=1:
+                shiprect.move_ip(-delX,0)
+                delX = 0
+            if abs(delY)>=1:
+                shiprect.move_ip(0,-delY)
+                delY = 0
             Mass += -1*BurnRate*TimeStep
             Vx = Vx - Thrust*TimeStep/Mass
             Vy = Vy - g*TimeStep
@@ -96,9 +114,18 @@ while run:
         t.sleep(0.25)
     if key[pg.K_d] == True:
         LoopBuddy = 0
+        delX = 0
+        delY = 0
         while LoopBuddy <= TurnLength:
             #D key should rotate the engine to face LEFT
-            shiprect.move_ip((MotionX(Vx, Thrust, TimeStep, Mass, -1*BurnRate), MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)))
+            delX += MotionX(Vx, Thrust, TimeStep, Mass, -1*BurnRate)
+            delY += MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)
+            if abs(delX)>=1:
+                shiprect.move_ip(-delX,0)
+                delX = 0
+            if abs(delY)>=1:
+                shiprect.move_ip(0,-delY)
+                delY = 0
             Mass += -1*BurnRate*TimeStep
             Vx = Vx + Thrust*TimeStep/Mass
             Vy = Vy - g*TimeStep
@@ -107,9 +134,18 @@ while run:
         t.sleep(0.25)
     if key[pg.K_w] == True:
         LoopBuddy = 0
+        delX = 0
+        delY = 0
         while LoopBuddy <= TurnLength:
             # W key should wait
-            shiprect.move_ip(MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate), MotionY(Vy, 0, TimeStep, Mass, 0))
+            delX += MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate)
+            delY += MotionY(Vy, 0, TimeStep, Mass, 0)
+            if abs(delX)>=1:
+                shiprect.move_ip(-delX,0)
+                delX = 0
+            if abs(delY)>=1:
+                shiprect.move_ip(0,-delY)
+                delY = 0
             Vy = Vy - g*TimeStep
             LoopBuddy += TimeStep     
             pg.display.update()
@@ -120,6 +156,6 @@ while run:
         if key[pg.K_p] == True:
             run = False
             
-    t.sleep(0.003)     
+    t.sleep(0.05)     
     pg.display.update()
 pg.quit()
