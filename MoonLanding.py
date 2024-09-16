@@ -37,6 +37,13 @@ shipimage = pg.image.load("TempImage.png").convert_alpha()
 shiprect = shipimage.get_rect()
 shiprect.topleft = (50, 50)
 
+# Defining Position Functions, dM should be negative
+def MotionX(vX, ThrustX, dT, Mass, dM):
+    deltaX = (vX*dT)+(ThrustX*dT)/(2*(Mass+(dM/2)))
+    return deltaX
+def MotionY(vY, ThrustY, dT, Mass, dM):
+    deltaY = (vY*dT)+(ThrustY*dT)/(2*(Mass+(dM/2)))-(g*dT^2/2)
+    return deltaY
 
 # load images
 # Background
