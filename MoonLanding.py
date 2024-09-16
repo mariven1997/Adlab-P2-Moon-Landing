@@ -1,6 +1,15 @@
 import pygame as pg
 import numpy as np
 import time as t
+#TODO
+# Stop thrust when fuel is empty
+# Detect Hitting the Ground
+# Aesthetics
+# The line plotty thing
+# Fuel Monitor
+# Desired Landing Site
+#
+
 
 
 # Initialize pygame
