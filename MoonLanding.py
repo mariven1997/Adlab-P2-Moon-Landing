@@ -83,7 +83,7 @@ while run:
     if key[pg.K_a] == True:
         LoopBuddy = 0
         while LoopBuddy <= TurnLength:
-#A key should rotate the engine to face RIGHT
+            #A key should rotate the engine to face RIGHT
             shiprect.move_ip((MotionX(Vx, -1*Thrust, TimeStep, Mass, -1*BurnRate), MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)))
             Mass += -1*BurnRate
             Vx = Vx - Thrust*TimeStep
