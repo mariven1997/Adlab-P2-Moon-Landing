@@ -25,6 +25,7 @@ pos = np.array([0,700])
 g = 1.62 # m/s^2
 EngineIsFiring = False
 EngineOrientation = "D"
+TimeStep = 0.001
 
 
 # Create the moon
@@ -72,16 +73,19 @@ while run:
     key = pg.key.get_pressed()
     if key[pg.K_s] == True:
         #S key should rotate the engine to face DOWN
-        shiprect.move_ip(0,-1)
+        shiprect.move_ip(MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate), MotionY())
+        Mass += -1*BurnRate
     if key[pg.K_a] == True:
         #A key should rotate the engine to face RIGHT
-        shiprect.move_ip(1,0)
+        shiprect.move_ip((MotionX(), MotionY()))
+        Mass += -1*BurnRate
     if key[pg.K_d] == True:
         #D key should rotate the engine to face LEFT
-        shiprect.move_ip(-1,0)
+        shiprect.move_ip((MotionX(), MotionY()))
+        Mass += -1*BurnRate
     if key[pg.K_w] == True:
         # W key should wait
-        shiprect.move_ip(0,1)
+        shiprect.move_ip(MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate), MotionY())
     
     for event in pg.event.get():
         if key[pg.K_p] == True:
