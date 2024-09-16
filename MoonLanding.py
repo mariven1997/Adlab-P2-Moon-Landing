@@ -70,11 +70,8 @@ while run:
         #D key should rotate the engine to face LEFT
         shiprect.move_ip(-1,0)
     if key[pg.K_w] == True:
-        # W key should fire the engine
+        # W key should wait
         shiprect.move_ip(0,1)
-    if key[pg.K_r] == True:
-        # R key should pass turn
-        shiprect.move_ip(0,0)
     
     for event in pg.event.get():
         if key[pg.K_p] == True:
