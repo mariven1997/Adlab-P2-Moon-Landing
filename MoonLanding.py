@@ -27,6 +27,7 @@ EngineIsFiring = False
 EngineOrientation = "D"
 TimeStep = 0.001
 TurnLength = 0.25
+PixelsPerMeter = 30
 
 
 # Create the moon
@@ -44,10 +45,10 @@ shiprect.topleft = (50, 50)
 
 # Defining Position Functions, dM should be negative
 def MotionX(vX, ThrustX, dT, Mass, dM):
-    deltaX = (vX*dT)+(ThrustX*(dT**2))/(2*(Mass+(dM/2)))
+    deltaX = PixelsPerMeter*(vX*dT)+(ThrustX*(dT**2))/(2*(Mass+(dM/2)))
     return deltaX
 def MotionY(vY, ThrustY, dT, Mass, dM):
-    deltaY = (vY*dT)+((ThrustY*(dT**2))/(2*(Mass+(dM/2))))-(g*(dT**2)/2)
+    deltaY = PixelsPerMeter*(vY*dT)+((ThrustY*(dT**2))/(2*(Mass+(dM/2))))-(g*(dT**2)/2)
     return deltaY
 
 # load images
