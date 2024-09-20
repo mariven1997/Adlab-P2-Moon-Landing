@@ -82,7 +82,7 @@ while run:
     screen.blit(shipimage, shiprect)
     
     #Tring to make it plot a parabola (calculated elsewhere) that shows projected trajectory
-    pg.draw.lines(screen, (50,50,50), False, PathTrack, width=5)
+    #pg.draw.lines(screen, (50,50,50), False, PathTrack, width=5)
     
     key = pg.key.get_pressed()
     if key[pg.K_s] == True:
