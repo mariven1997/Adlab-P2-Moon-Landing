@@ -40,7 +40,7 @@ PixelsPerMeter = 30
 Mass = DryMass + FMass
 
 # A list that keeps track of positional data for the line plot
-PathTrack = []
+PathTrack = [[X, Y]]
 
 # Create the moon
 moon = pg.Rect((pos[0],pos[1],1000,100))
