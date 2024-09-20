@@ -39,6 +39,9 @@ TurnLength = 0.25
 PixelsPerMeter = 30
 Mass = DryMass + FMass
 
+# A list that keeps track of positional data for the line plot
+PathTrack = []
+
 # Create the moon
 moon = pg.Rect((pos[0],pos[1],1000,100))
 
@@ -79,7 +82,7 @@ while run:
     screen.blit(shipimage, shiprect)
     
     #Tring to make it plot a parabola (calculated elsewhere) that shows projected trajectory
-    pg.draw.lines(screen, (50,50,50), False, ((1,1), (10, 20), (75,300)), width=5)
+    pg.draw.lines(screen, (50,50,50), False, PathTrack, width=5)
     
     key = pg.key.get_pressed()
     if key[pg.K_s] == True:
@@ -99,6 +102,7 @@ while run:
             Mass += -1*BurnRate*TimeStep
             Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep
             LoopBuddy += TimeStep    
+            PathTrack.append([X, Y])
             pg.display.update()
         t.sleep(0.25)
     if key[pg.K_a] == True:
@@ -118,7 +122,8 @@ while run:
             Mass += -1*BurnRate*TimeStep
             Vx = Vx - Thrust*TimeStep/Mass
             Vy = Vy - g*TimeStep
-            LoopBuddy += TimeStep  
+            LoopBuddy += TimeStep   
+            PathTrack.append([X, Y])
             pg.display.update()
         t.sleep(0.25)
     if key[pg.K_d] == True:
@@ -138,7 +143,8 @@ while run:
             Mass += -1*BurnRate*TimeStep
             Vx = Vx + Thrust*TimeStep/Mass
             Vy = Vy - g*TimeStep
-            LoopBuddy += TimeStep     
+            LoopBuddy += TimeStep      
+            PathTrack.append([X, Y])
             pg.display.update()
         t.sleep(0.25)
     if key[pg.K_w] == True:
@@ -156,7 +162,8 @@ while run:
                 shiprect.move_ip(0,-delY)
                 delY = 0
             Vy = Vy - g*TimeStep
-            LoopBuddy += TimeStep     
+            LoopBuddy += TimeStep      
+            PathTrack.append([X, Y])
             pg.display.update()
         t.sleep(0.25)
     
