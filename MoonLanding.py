@@ -51,7 +51,7 @@ screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pg.display.set_caption('Moon Lander')
 
 # Establishes ship as a rectangle and also gives it a graphics
-shipimage = pg.image.load("TempImage.png").convert_alpha()
+shipimage = pg.image.load("Lander.png").convert_alpha()
 shiprect = shipimage.get_rect()
 shiprect.topleft = (50, 50)
 
