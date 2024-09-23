@@ -1,3 +1,4 @@
+
 import pygame as pg
 import numpy as np
 import time as t
@@ -37,13 +38,19 @@ EngineOrientation = "D"
 TimeStep = 0.001
 TurnLength = 0.25
 PixelsPerMeter = 30
+Xo = SCREEN_WIDTH/2 # in pixels
+Yo = 700 # "   "
 Mass = DryMass + FMass
+endpos = np.array([Xo+10*PixelsPerMeter,Yo-1.5*PixelsPerMeter])
 
 # A list that keeps track of positional data for the line plot
 PathTrack = [[X, Y]]
 
 # Create the moon
 moon = pg.Rect((pos[0],pos[1],1000,100))
+
+# Create the win condition
+Landing = pg.Rect((endpos[0],endpos[1],2*PixelsPerMeter,PixelsPerMeter))
 
 
 # Create the screen
@@ -53,7 +60,7 @@ pg.display.set_caption('Moon Lander')
 # Establishes ship as a rectangle and also gives it a graphics
 shipimage = pg.image.load("Lander.png").convert_alpha()
 shiprect = shipimage.get_rect()
-shiprect.topleft = (50, 50)
+shiprect.topleft = (0, 50)
 
 # Defining Position Functions, dM should be negative
 def MotionX(vX, ThrustX, dT, Mass, dM):
@@ -80,6 +87,8 @@ while run:
     # Place the ship
     pg.draw.rect(screen, (50,50,50), shiprect)
     screen.blit(shipimage, shiprect)
+    # Place the win condition
+    pg.draw.rect(screen, (10,128,10), Landing)
     
     #Tring to make it plot a parabola (calculated elsewhere) that shows projected trajectory
     #pg.draw.lines(screen, (50,50,50), False, PathTrack, width=5)
