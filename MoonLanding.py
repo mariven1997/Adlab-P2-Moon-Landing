@@ -31,13 +31,13 @@ Vy = 0 #Initial velocity, m/s
 DryMass = (1 + 0.1*n%5)*10**4 #Initial mass, kg
 FMass = 4*(1 + 0.1*n%6)*10**3 #Initial mass of the fuel
 Thrust = 4.8*(1 + 0.05*n%4)*10**4 #Thrust supplied by the engine
-BurnRate = 5 #Fuel burn rate, kg/s
+BurnRate = 500 #Fuel burn rate, kg/s
 pos = np.array([0,700])
 g = 1.62 # m/s^2
 EngineIsFiring = False
 EngineOrientation = "D"
 TimeStep = 0.001
-TurnLength = 0.25
+TurnLength = 0.3
 PixelsPerMeter = 30
 Xo = SCREEN_WIDTH/2 # in pixels
 Yo = 700 # "   "
@@ -62,6 +62,10 @@ pg.display.set_caption('Moon Lander')
 shipimage = pg.image.load("Lander.png").convert_alpha()
 shiprect = shipimage.get_rect()
 shiprect.topleft = (0, 50)
+
+# Create the info dump
+pg.font.init()
+Info_Panel = pg.font.SysFont('Roboto', 30)
 
 # Defining Position Functions, dM should be negative
 def MotionX(vX, ThrustX, dT, Mass, dM):
@@ -184,15 +188,17 @@ while run:
             LoopBuddy += TimeStep      
             PathTrack.append([X, Y])
         t.sleep(0.05)
-    print(CurrentPos)
-    print(endpos)
     if endpos[0]<=CurrentPos[0]<=endpos[0]+2*PixelsPerMeter and endpos[1]>=CurrentPos[1]>=endpos[1]-1*PixelsPerMeter:
-        print("yay")
+        if np.sqrt(Vy**2+Vx**2) <= 1:
+            print("yay")
+        else:
+            print("You died")
         break
     for event in pg.event.get():
         if key[pg.K_p] == True:
             run = False
-            
+    text_surface = Info_Panel.render(f'Current Velocity: {np.sqrt(Vx**2+Vy**2):.3f} m/s', False, (0, 128, 0))
+    screen.blit(text_surface, (0,0))       
     t.sleep(0.05)     
-    #pg.display.update()
+    pg.display.update()
 pg.quit()
