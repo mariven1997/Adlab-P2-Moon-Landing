@@ -43,6 +43,8 @@ Xo = SCREEN_WIDTH/2 # in pixels
 Yo = 700 # "   "
 Mass = DryMass + FMass
 endpos = np.array([Xo+10*PixelsPerMeter,Yo-1.5*PixelsPerMeter])
+ShipHeight = 54  #In pixels
+ShipWidth = 34  #In pixels
 
 # A list that keeps track of positional data for the line plot
 PathTrack = [[X, Y]]
@@ -116,8 +118,6 @@ while run:
     if Playtime:
         if key[pg.K_s] == True:
             LoopBuddy = 0
-            #delX = 0
-            #delY = 0
             while LoopBuddy <= TurnLength:        
                 #S key should rotate the engine to face DOWN
                 delX += MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate)
@@ -137,11 +137,8 @@ while run:
                     Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep    
                 PathTrack.append([X, Y])
-            #t.sleep(0.05)
         if key[pg.K_a] == True:
             LoopBuddy = 0
-            #delX = 0
-            #delY = 0
             while LoopBuddy <= TurnLength:
                 #A key should rotate the engine to face RIGHT
                 delX += MotionX(Vx, -1*Thrust, TimeStep, Mass, -1*BurnRate)
@@ -160,11 +157,8 @@ while run:
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep   
                 PathTrack.append([X, Y])
-            #t.sleep(0.05)
         if key[pg.K_d] == True:
             LoopBuddy = 0
-            #delX = 0
-            #delY = 0
             while LoopBuddy <= TurnLength:
                 #D key should rotate the engine to face LEFT
                 delX += MotionX(Vx, Thrust, TimeStep, Mass, -1*BurnRate)
@@ -183,11 +177,8 @@ while run:
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep      
                 PathTrack.append([X, Y])
-            #t.sleep(0.05)
         if key[pg.K_w] == True:
             LoopBuddy = 0
-            #delX = 0
-            #delY = 0
             while LoopBuddy <= TurnLength:
                 # W key should wait
                 delX += MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate)
@@ -203,15 +194,14 @@ while run:
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep      
                 PathTrack.append([X, Y])
-            #t.sleep(0.05)
-        if endpos[0]<=CurrentPos[0]<=endpos[0]+2*PixelsPerMeter-30 and endpos[1]>=CurrentPos[1]>=endpos[1]-1*PixelsPerMeter and Playtime:
+        if endpos[0]<=CurrentPos[0]<=endpos[0]+2*PixelsPerMeter-ShipWidth and endpos[1]>=CurrentPos[1]>=endpos[1]-1*PixelsPerMeter and Playtime:
             if np.sqrt(Vy**2+Vx**2) <= 1:
                 print("yay!! :)")
                 Playtime = False
             else:
                 print("You died :(")
                 Playtime = False
-        if CurrentPos[1]>=650:
+        if CurrentPos[1]>=700-ShipHeight:
             if np.sqrt(Vy**2+Vx**2) <= 1:
                 print("You lose >:(")
                 Playtime = False
@@ -222,7 +212,6 @@ while run:
         if key[pg.K_p] == True:
             run = False
     text_surface = Velocity_Panel.render(f'Current Velocity: {np.sqrt(Vx**2+Vy**2):.3f} m/s, Fuel Mass: {Mass-DryMass:.2f} kg', False, (0, 128, 0))
-    screen.blit(text_surface, (0,0))       
-    #t.sleep(0.05)     
+    screen.blit(text_surface, (0,0))    
     pg.display.update()
 pg.quit()
