@@ -65,7 +65,8 @@ shiprect.topleft = (0, 50)
 
 # Create the info dump
 pg.font.init()
-Info_Panel = pg.font.SysFont('Roboto', 30)
+Velocity_Panel = pg.font.SysFont('Roboto', 30)
+Fuel_Panel = pg.font.SysFont('Roboto', 30)
 
 # Defining Position Functions, dM should be negative
 def MotionX(vX, ThrustX, dT, Mass, dM):
@@ -119,8 +120,11 @@ while run:
                 shiprect.move_ip(0,-math.floor(delY))
                 CurrentPos += [0,-math.floor(delY)]
                 delY = delY - math.floor(delY)
-            Mass += -1*BurnRate*TimeStep
-            Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep
+            if Mass-DryMass>0:
+                Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep
+                Mass += -1*BurnRate*TimeStep
+            else:
+                Vy = Vy - g*TimeStep
             LoopBuddy += TimeStep    
             PathTrack.append([X, Y])
         t.sleep(0.05)
@@ -140,8 +144,9 @@ while run:
                 shiprect.move_ip(0,-math.floor(delY))
                 CurrentPos += [0,-math.floor(delY)]
                 delY = delY - math.floor(delY)
-            Mass += -1*BurnRate*TimeStep
-            Vx = Vx - Thrust*TimeStep/Mass
+            if Mass-DryMass>0:
+                Vx = Vx - Thrust*TimeStep/Mass
+                Mass += -1*BurnRate*TimeStep
             Vy = Vy - g*TimeStep
             LoopBuddy += TimeStep   
             PathTrack.append([X, Y])
@@ -162,8 +167,9 @@ while run:
                 shiprect.move_ip(0,-math.floor(delY))
                 CurrentPos += [0,-math.floor(delY)]
                 delY = delY - math.floor(delY)
-            Mass += -1*BurnRate*TimeStep
-            Vx = Vx + Thrust*TimeStep/Mass
+            if Mass-DryMass>0:
+                Vx = Vx + Thrust*TimeStep/Mass
+                Mass += -1*BurnRate*TimeStep
             Vy = Vy - g*TimeStep
             LoopBuddy += TimeStep      
             PathTrack.append([X, Y])
@@ -190,14 +196,20 @@ while run:
         t.sleep(0.05)
     if endpos[0]<=CurrentPos[0]<=endpos[0]+2*PixelsPerMeter and endpos[1]>=CurrentPos[1]>=endpos[1]-1*PixelsPerMeter:
         if np.sqrt(Vy**2+Vx**2) <= 1:
-            print("yay")
+            print("yay!! :)")
         else:
-            print("You died")
+            print("You died :(")
+        break
+    if CurrentPos[1]>=650:
+        if np.sqrt(Vy**2+Vx**2) <= 1:
+            print("You lose >:(")
+        else:
+            print("You died :(")
         break
     for event in pg.event.get():
         if key[pg.K_p] == True:
             run = False
-    text_surface = Info_Panel.render(f'Current Velocity: {np.sqrt(Vx**2+Vy**2):.3f} m/s', False, (0, 128, 0))
+    text_surface = Velocity_Panel.render(f'Current Velocity: {np.sqrt(Vx**2+Vy**2):.3f} m/s, Fuel Mass: {Mass-DryMass:.2f} kg', False, (0, 128, 0))
     screen.blit(text_surface, (0,0))       
     t.sleep(0.05)     
     pg.display.update()
