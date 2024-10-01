@@ -87,130 +87,142 @@ def MotionY(vY, ThrustY, dT, Mass, dM):
 # Create a current position array for the lander
 CurrentPos = np.array([0.,50.])
 
+# Create x and y positional change variables
+delX = 0
+delY = 0
+
 run = True
+Playtime = True
 while run:
     
     screen.fill((0,0,0))
     
     # Place the moon
     pg.draw.rect(screen, (120,120,120), moon)
+    # Place the win condition
+    pg.draw.rect(screen, (10,128,10), Landing)
     # Place the ship
     pg.draw.rect(screen, (50,50,50), shiprect)
     screen.blit(shipimage, shiprect)
-    # Place the win condition
-    pg.draw.rect(screen, (10,128,10), Landing)
+    
     
     #Tring to make it plot a parabola (calculated elsewhere) that shows projected trajectory
     #pg.draw.lines(screen, (50,50,50), False, PathTrack, width=5)
     
+    
+    
+    
     key = pg.key.get_pressed()
-    if key[pg.K_s] == True:
-        LoopBuddy = 0
-        delX = 0
-        delY = 0
-        while LoopBuddy <= TurnLength:        
-            #S key should rotate the engine to face DOWN
-            delX += MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate)
-            delY += MotionY(Vy, Thrust, TimeStep, Mass, -1*BurnRate)
-            if abs(delX)>=1:
-                shiprect.move_ip(-math.floor(delX),0)
-                CurrentPos += [-math.floor(delX),0]
-                delX = delX - math.floor(delX)
-            if abs(delY)>=1:
-                shiprect.move_ip(0,-math.floor(delY))
-                CurrentPos += [0,-math.floor(delY)]
-                delY = delY - math.floor(delY)
-            if Mass-DryMass>0:
-                Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep
-                Mass += -1*BurnRate*TimeStep
-            else:
+    if Playtime:
+        if key[pg.K_s] == True:
+            LoopBuddy = 0
+            #delX = 0
+            #delY = 0
+            while LoopBuddy <= TurnLength:        
+                #S key should rotate the engine to face DOWN
+                delX += MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate)
+                delY += MotionY(Vy, Thrust, TimeStep, Mass, -1*BurnRate)
+                if abs(delX)>=1:
+                    shiprect.move_ip(-math.floor(delX),0)
+                    CurrentPos += [-math.floor(delX),0]
+                    delX = delX - math.floor(delX)
+                if abs(delY)>=1:
+                    shiprect.move_ip(0,-math.floor(delY))
+                    CurrentPos += [0,-math.floor(delY)]
+                    delY = delY - math.floor(delY)
+                if Mass-DryMass>0:
+                    Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep
+                    Mass += -1*BurnRate*TimeStep
+                else:
+                    Vy = Vy - g*TimeStep
+                LoopBuddy += TimeStep    
+                PathTrack.append([X, Y])
+            #t.sleep(0.05)
+        if key[pg.K_a] == True:
+            LoopBuddy = 0
+            #delX = 0
+            #delY = 0
+            while LoopBuddy <= TurnLength:
+                #A key should rotate the engine to face RIGHT
+                delX += MotionX(Vx, -1*Thrust, TimeStep, Mass, -1*BurnRate)
+                delY += MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)
+                if abs(delX)>=1:
+                    shiprect.move_ip(-math.floor(delX),0)
+                    CurrentPos += [-math.floor(delX),0]
+                    delX = delX - math.floor(delX)
+                if abs(delY)>=1:
+                    shiprect.move_ip(0,-math.floor(delY))
+                    CurrentPos += [0,-math.floor(delY)]
+                    delY = delY - math.floor(delY)
+                if Mass-DryMass>0:
+                    Vx = Vx - Thrust*TimeStep/Mass
+                    Mass += -1*BurnRate*TimeStep
                 Vy = Vy - g*TimeStep
-            LoopBuddy += TimeStep    
-            PathTrack.append([X, Y])
-        t.sleep(0.05)
-    if key[pg.K_a] == True:
-        LoopBuddy = 0
-        delX = 0
-        delY = 0
-        while LoopBuddy <= TurnLength:
-            #A key should rotate the engine to face RIGHT
-            delX += MotionX(Vx, -1*Thrust, TimeStep, Mass, -1*BurnRate)
-            delY += MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)
-            if abs(delX)>=1:
-                shiprect.move_ip(-math.floor(delX),0)
-                CurrentPos += [-math.floor(delX),0]
-                delX = delX - math.floor(delX)
-            if abs(delY)>=1:
-                shiprect.move_ip(0,-math.floor(delY))
-                CurrentPos += [0,-math.floor(delY)]
-                delY = delY - math.floor(delY)
-            if Mass-DryMass>0:
-                Vx = Vx - Thrust*TimeStep/Mass
-                Mass += -1*BurnRate*TimeStep
-            Vy = Vy - g*TimeStep
-            LoopBuddy += TimeStep   
-            PathTrack.append([X, Y])
-        t.sleep(0.05)
-    if key[pg.K_d] == True:
-        LoopBuddy = 0
-        delX = 0
-        delY = 0
-        while LoopBuddy <= TurnLength:
-            #D key should rotate the engine to face LEFT
-            delX += MotionX(Vx, Thrust, TimeStep, Mass, -1*BurnRate)
-            delY += MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)
-            if abs(delX)>=1:
-                shiprect.move_ip(-math.floor(delX),0)
-                CurrentPos += [-math.floor(delX),0]
-                delX = delX - math.floor(delX)
-            if abs(delY)>=1:
-                shiprect.move_ip(0,-math.floor(delY))
-                CurrentPos += [0,-math.floor(delY)]
-                delY = delY - math.floor(delY)
-            if Mass-DryMass>0:
-                Vx = Vx + Thrust*TimeStep/Mass
-                Mass += -1*BurnRate*TimeStep
-            Vy = Vy - g*TimeStep
-            LoopBuddy += TimeStep      
-            PathTrack.append([X, Y])
-        t.sleep(0.05)
-    if key[pg.K_w] == True:
-        LoopBuddy = 0
-        delX = 0
-        delY = 0
-        while LoopBuddy <= TurnLength:
-            # W key should wait
-            delX += MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate)
-            delY += MotionY(Vy, 0, TimeStep, Mass, 0)
-            if abs(delX)>=1:
-                shiprect.move_ip(-math.floor(delX),0)
-                CurrentPos += [-math.floor(delX),0]
-                delX = delX - math.floor(delX)
-            if abs(delY)>=1:
-                shiprect.move_ip(0,-math.floor(delY))
-                CurrentPos += [0,-math.floor(delY)]
-                delY = delY - math.floor(delY)
-            Vy = Vy - g*TimeStep
-            LoopBuddy += TimeStep      
-            PathTrack.append([X, Y])
-        t.sleep(0.05)
-    if endpos[0]<=CurrentPos[0]<=endpos[0]+2*PixelsPerMeter and endpos[1]>=CurrentPos[1]>=endpos[1]-1*PixelsPerMeter:
-        if np.sqrt(Vy**2+Vx**2) <= 1:
-            print("yay!! :)")
-        else:
-            print("You died :(")
-        break
-    if CurrentPos[1]>=650:
-        if np.sqrt(Vy**2+Vx**2) <= 1:
-            print("You lose >:(")
-        else:
-            print("You died :(")
-        break
+                LoopBuddy += TimeStep   
+                PathTrack.append([X, Y])
+            #t.sleep(0.05)
+        if key[pg.K_d] == True:
+            LoopBuddy = 0
+            #delX = 0
+            #delY = 0
+            while LoopBuddy <= TurnLength:
+                #D key should rotate the engine to face LEFT
+                delX += MotionX(Vx, Thrust, TimeStep, Mass, -1*BurnRate)
+                delY += MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)
+                if abs(delX)>=1:
+                    shiprect.move_ip(-math.floor(delX),0)
+                    CurrentPos += [-math.floor(delX),0]
+                    delX = delX - math.floor(delX)
+                if abs(delY)>=1:
+                    shiprect.move_ip(0,-math.floor(delY))
+                    CurrentPos += [0,-math.floor(delY)]
+                    delY = delY - math.floor(delY)
+                if Mass-DryMass>0:
+                    Vx = Vx + Thrust*TimeStep/Mass
+                    Mass += -1*BurnRate*TimeStep
+                Vy = Vy - g*TimeStep
+                LoopBuddy += TimeStep      
+                PathTrack.append([X, Y])
+            #t.sleep(0.05)
+        if key[pg.K_w] == True:
+            LoopBuddy = 0
+            #delX = 0
+            #delY = 0
+            while LoopBuddy <= TurnLength:
+                # W key should wait
+                delX += MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate)
+                delY += MotionY(Vy, 0, TimeStep, Mass, 0)
+                if abs(delX)>=1:
+                    shiprect.move_ip(-math.floor(delX),0)
+                    CurrentPos += [-math.floor(delX),0]
+                    delX = delX - math.floor(delX)
+                if abs(delY)>=1:
+                    shiprect.move_ip(0,-math.floor(delY))
+                    CurrentPos += [0,-math.floor(delY)]
+                    delY = delY - math.floor(delY)
+                Vy = Vy - g*TimeStep
+                LoopBuddy += TimeStep      
+                PathTrack.append([X, Y])
+            #t.sleep(0.05)
+        if endpos[0]<=CurrentPos[0]<=endpos[0]+2*PixelsPerMeter-30 and endpos[1]>=CurrentPos[1]>=endpos[1]-1*PixelsPerMeter and Playtime:
+            if np.sqrt(Vy**2+Vx**2) <= 1:
+                print("yay!! :)")
+                Playtime = False
+            else:
+                print("You died :(")
+                Playtime = False
+        if CurrentPos[1]>=650:
+            if np.sqrt(Vy**2+Vx**2) <= 1:
+                print("You lose >:(")
+                Playtime = False
+            else:
+                print("You died :(")
+                Playtime = False
     for event in pg.event.get():
         if key[pg.K_p] == True:
             run = False
     text_surface = Velocity_Panel.render(f'Current Velocity: {np.sqrt(Vx**2+Vy**2):.3f} m/s, Fuel Mass: {Mass-DryMass:.2f} kg', False, (0, 128, 0))
     screen.blit(text_surface, (0,0))       
-    t.sleep(0.05)     
+    #t.sleep(0.05)     
     pg.display.update()
 pg.quit()
