@@ -42,7 +42,7 @@ PixelsPerMeter = 30
 Xo = SCREEN_WIDTH/2 # in pixels
 Yo = 700 # "   "
 Mass = DryMass + FMass
-endpos = np.array([Xo+10*PixelsPerMeter,Yo-1.5*PixelsPerMeter])
+endpos = np.array([Xo+10*PixelsPerMeter,Yo])
 ShipHeight = 54  #In pixels
 ShipWidth = 34  #In pixels
 
@@ -50,7 +50,7 @@ ShipWidth = 34  #In pixels
 PathTrack = [[X, Y]]
 
 # Create the moon
-moon = pg.Rect((pos[0],pos[1],1000,100))
+moon = pg.Rect((pos[0],pos[1] + 0.5*PixelsPerMeter,1000,100))
 
 # Create the win condition
 Landing = pg.Rect((endpos[0],endpos[1],2*PixelsPerMeter,PixelsPerMeter))
@@ -194,14 +194,14 @@ while run:
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep      
                 PathTrack.append([X, Y])
-        if endpos[0]<=CurrentPos[0]<=endpos[0]+2*PixelsPerMeter-ShipWidth and endpos[1]>=CurrentPos[1]>=endpos[1]-1*PixelsPerMeter and Playtime:
+        if endpos[0]<=CurrentPos[0]<=endpos[0]+2*PixelsPerMeter-ShipWidth and endpos[1]-0.5*PixelsPerMeter>=(CurrentPos[1] + ShipHeight)>=endpos[1]-0.5*PixelsPerMeter and Playtime:
             if np.sqrt(Vy**2+Vx**2) <= 1:
                 print("yay!! :)")
                 Playtime = False
             else:
                 print("You died :(")
                 Playtime = False
-        if CurrentPos[1]>=700-ShipHeight:
+        elif CurrentPos[1]>=700-ShipHeight:
             if np.sqrt(Vy**2+Vx**2) <= 1:
                 print("You lose >:(")
                 Playtime = False
