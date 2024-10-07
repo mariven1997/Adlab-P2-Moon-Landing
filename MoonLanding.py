@@ -12,7 +12,11 @@ import math
 # Desired Landing Site
 #
 
-
+BurnLeftArt = ["R1.png", "R2.png", "R3.png", "R4.png", "R5.png"]
+BurnRightArt = ["L1.png", "L2.png", "L3.png", "L4.png", "L5.png"]
+BurnUpArt = ["V1.png", "V2.png", "V3.png", "V4.png", "V5.png"]
+WreckArt = ["Wreck1.png", "Wreck2.png", "Wreck3.png", "Wreck4.png", "Wreck5.png"]
+IdleArt = "Lander.png"
 
 # Initialize pygame
 pg.init()
