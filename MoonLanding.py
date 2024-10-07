@@ -105,11 +105,11 @@ while run:
     
     # Place the moon
     pg.draw.rect(screen, (120,120,120), moon)
-    # Place the win condition
-    pg.draw.rect(screen, (10,128,10), Landing)
     # Place the ship
     pg.draw.rect(screen, (50,50,50), shiprect)
     screen.blit(shipimage, shiprect)
+    # Place the win condition
+    pg.draw.rect(screen, (10,128,10), Landing)
     
     
     #Tring to make it plot a parabola (calculated elsewhere) that shows projected trajectory
