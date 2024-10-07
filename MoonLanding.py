@@ -17,6 +17,7 @@ BurnRightArt = ["L1.png", "L2.png", "L3.png", "L4.png", "L5.png"]
 BurnUpArt = ["V1.png", "V2.png", "V3.png", "V4.png", "V5.png"]
 WreckArt = ["Wreck1.png", "Wreck2.png", "Wreck3.png", "Wreck4.png", "Wreck5.png"]
 IdleArt = "Lander.png"
+Cycle = 0
 
 # Initialize pygame
 pg.init()
@@ -65,7 +66,7 @@ screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pg.display.set_caption('Moon Lander')
 
 # Establishes ship as a rectangle and also gives it a graphics
-shipimage = pg.image.load("Lander.png").convert_alpha()
+shipimage = pg.image.load(IdleArt).convert_alpha()
 shiprect = shipimage.get_rect()
 shiprect.topleft = (0, 50)
 
@@ -137,6 +138,10 @@ while run:
                 if Mass-DryMass>0:
                     Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep
                     Mass += -1*BurnRate*TimeStep
+                    shipimage = pg.image.load(BurnUpArt[Cycle % 5]).convert_alpha()
+                    Cycle +=1
+                    if Cycle >= 5*len(BurnUpArt):
+                        Cycle = 0
                 else:
                     Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep    
@@ -158,6 +163,10 @@ while run:
                 if Mass-DryMass>0:
                     Vx = Vx - Thrust*TimeStep/Mass
                     Mass += -1*BurnRate*TimeStep
+                    shipimage = pg.image.load(BurnLeftArt[Cycle % 5]).convert_alpha()
+                    Cycle +=1
+                    if Cycle >= 5*len(BurnLeftArt):
+                        Cycle = 0
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep   
                 PathTrack.append([X, Y])
@@ -178,6 +187,10 @@ while run:
                 if Mass-DryMass>0:
                     Vx = Vx + Thrust*TimeStep/Mass
                     Mass += -1*BurnRate*TimeStep
+                    shipimage = pg.image.load(BurnRightArt[Cycle % 5]).convert_alpha()
+                    Cycle +=1
+                    if Cycle >= 5*len(BurnRightArt):
+                        Cycle = 0
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep      
                 PathTrack.append([X, Y])
@@ -195,6 +208,7 @@ while run:
                     shiprect.move_ip(0,-math.floor(delY))
                     CurrentPos += [0,-math.floor(delY)]
                     delY = delY - math.floor(delY)
+                    shipimage = pg.image.load(IdleArt).convert_alpha()
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep      
                 PathTrack.append([X, Y])
@@ -211,6 +225,11 @@ while run:
                 Playtime = False
             else:
                 print("You died :(")
+                while LoopBuddy < 10000000:
+                    shipimage = pg.image.load(WreckArt[Cycle % 5]).convert_alpha()
+                    Cycle +=1
+                    if Cycle >= 5*len(WreckArt):
+                        Cycle = 0
                 Playtime = False
     for event in pg.event.get():
         if key[pg.K_p] == True:
