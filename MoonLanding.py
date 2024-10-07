@@ -2,6 +2,7 @@
 import pygame as pg
 import numpy as np
 import time as t
+import math
 #TODO
 # Stop thrust when fuel is empty
 # Detect Hitting the Ground
@@ -65,17 +66,21 @@ shiprect.topleft = (0, 50)
 # Defining Position Functions, dM should be negative
 def MotionX(vX, ThrustX, dT, Mass, dM):
     deltaX = PixelsPerMeter*((vX*dT)+(ThrustX*(dT**2))/(2*(Mass+(dM*TimeStep/2))))
+    pg.display.update()
+    t.sleep(0.0001)
     return deltaX
 def MotionY(vY, ThrustY, dT, Mass, dM):
     deltaY = PixelsPerMeter*((vY*dT)+((ThrustY*(dT**2))/(2*(Mass+(dM*TimeStep/2))))-(g*(dT**2)/2))
+    pg.display.update()
+    t.sleep(0.0001)
     return deltaY
 
 # load images
 # Background
 # background_img = pg.image.load('').convert_alpha    # This will be where we load whatever background image of the moon we get
 
-
-
+# Create a current position array for the lander
+CurrentPos = np.array([0.,50.])
 
 run = True
 while run:
@@ -103,17 +108,18 @@ while run:
             delX += MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate)
             delY += MotionY(Vy, Thrust, TimeStep, Mass, -1*BurnRate)
             if abs(delX)>=1:
-                shiprect.move_ip(-delX,0)
-                delX = 0
+                shiprect.move_ip(-math.floor(delX),0)
+                CurrentPos += [-math.floor(delX),0]
+                delX = delX - math.floor(delX)
             if abs(delY)>=1:
-                shiprect.move_ip(0,-delY)
-                delY = 0
+                shiprect.move_ip(0,-math.floor(delY))
+                CurrentPos += [0,-math.floor(delY)]
+                delY = delY - math.floor(delY)
             Mass += -1*BurnRate*TimeStep
             Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep
             LoopBuddy += TimeStep    
             PathTrack.append([X, Y])
-            pg.display.update()
-        t.sleep(0.25)
+        t.sleep(0.05)
     if key[pg.K_a] == True:
         LoopBuddy = 0
         delX = 0
@@ -123,18 +129,19 @@ while run:
             delX += MotionX(Vx, -1*Thrust, TimeStep, Mass, -1*BurnRate)
             delY += MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)
             if abs(delX)>=1:
-                shiprect.move_ip(-delX,0)
-                delX = 0
+                shiprect.move_ip(-math.floor(delX),0)
+                CurrentPos += [-math.floor(delX),0]
+                delX = delX - math.floor(delX)
             if abs(delY)>=1:
-                shiprect.move_ip(0,-delY)
-                delY = 0
+                shiprect.move_ip(0,-math.floor(delY))
+                CurrentPos += [0,-math.floor(delY)]
+                delY = delY - math.floor(delY)
             Mass += -1*BurnRate*TimeStep
             Vx = Vx - Thrust*TimeStep/Mass
             Vy = Vy - g*TimeStep
             LoopBuddy += TimeStep   
             PathTrack.append([X, Y])
-            pg.display.update()
-        t.sleep(0.25)
+        t.sleep(0.05)
     if key[pg.K_d] == True:
         LoopBuddy = 0
         delX = 0
@@ -144,18 +151,19 @@ while run:
             delX += MotionX(Vx, Thrust, TimeStep, Mass, -1*BurnRate)
             delY += MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)
             if abs(delX)>=1:
-                shiprect.move_ip(-delX,0)
-                delX = 0
+                shiprect.move_ip(-math.floor(delX),0)
+                CurrentPos += [-math.floor(delX),0]
+                delX = delX - math.floor(delX)
             if abs(delY)>=1:
-                shiprect.move_ip(0,-delY)
-                delY = 0
+                shiprect.move_ip(0,-math.floor(delY))
+                CurrentPos += [0,-math.floor(delY)]
+                delY = delY - math.floor(delY)
             Mass += -1*BurnRate*TimeStep
             Vx = Vx + Thrust*TimeStep/Mass
             Vy = Vy - g*TimeStep
             LoopBuddy += TimeStep      
             PathTrack.append([X, Y])
-            pg.display.update()
-        t.sleep(0.25)
+        t.sleep(0.05)
     if key[pg.K_w] == True:
         LoopBuddy = 0
         delX = 0
@@ -165,22 +173,26 @@ while run:
             delX += MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate)
             delY += MotionY(Vy, 0, TimeStep, Mass, 0)
             if abs(delX)>=1:
-                shiprect.move_ip(-delX,0)
-                delX = 0
+                shiprect.move_ip(-math.floor(delX),0)
+                CurrentPos += [-math.floor(delX),0]
+                delX = delX - math.floor(delX)
             if abs(delY)>=1:
-                shiprect.move_ip(0,-delY)
-                delY = 0
+                shiprect.move_ip(0,-math.floor(delY))
+                CurrentPos += [0,-math.floor(delY)]
+                delY = delY - math.floor(delY)
             Vy = Vy - g*TimeStep
             LoopBuddy += TimeStep      
             PathTrack.append([X, Y])
-            pg.display.update()
-        t.sleep(0.25)
-    
-    
+        t.sleep(0.05)
+    print(CurrentPos)
+    print(endpos)
+    if endpos[0]<=CurrentPos[0]<=endpos[0]+2*PixelsPerMeter and endpos[1]>=CurrentPos[1]>=endpos[1]-1*PixelsPerMeter:
+        print("yay")
+        break
     for event in pg.event.get():
         if key[pg.K_p] == True:
             run = False
             
     t.sleep(0.05)     
-    pg.display.update()
+    #pg.display.update()
 pg.quit()
