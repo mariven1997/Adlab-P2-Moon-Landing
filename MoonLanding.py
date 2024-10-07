@@ -68,7 +68,7 @@ pg.display.set_caption('Moon Lander')
 # Establishes ship as a rectangle and also gives it a graphics
 shipimage = pg.image.load(IdleArt).convert_alpha()
 shiprect = shipimage.get_rect()
-shiprect.topleft = (0, 50)
+shiprect.topleft = (-50, 50)
 
 # Create the info dump
 pg.font.init()
@@ -106,11 +106,11 @@ while run:
     
     # Place the moon
     pg.draw.rect(screen, (120,120,120), moon)
-    # Place the win condition
-    pg.draw.rect(screen, (10,128,10), Landing)
     # Place the ship
     pg.draw.rect(screen, (50,50,50), shiprect)
     screen.blit(shipimage, shiprect)
+    # Place the win condition
+    pg.draw.rect(screen, (10,128,10), Landing)
     
     
     #Tring to make it plot a parabola (calculated elsewhere) that shows projected trajectory
@@ -219,7 +219,7 @@ while run:
             else:
                 print("You died :(")
                 Playtime = False
-        elif CurrentPos[1]>=700-ShipHeight:
+        elif CurrentPos[1]>=700-ShipHeight and not endpos[0]<=CurrentPos[0]<=endpos[0]+2*PixelsPerMeter-ShipWidth:
             if np.sqrt(Vy**2+Vx**2) <= 1:
                 print("You lose >:(")
                 Playtime = False
