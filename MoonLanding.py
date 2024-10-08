@@ -23,7 +23,7 @@ Cycle = 0
 pg.init()
 
 # Create the height and width of the window that the game runs in
-SCREEN_WIDTH = 800
+SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 850
 
 
@@ -58,7 +58,7 @@ PathTrack = [[X, Y]]
 moon = pg.Rect((pos[0],pos[1] + 0.5*PixelsPerMeter,1000,100))
 
 # Create the win condition
-Landing = pg.Rect((endpos[0],endpos[1],2*PixelsPerMeter,PixelsPerMeter))
+LandingZone = pg.Rect((endpos[0] - 0.5*ShipWidth,endpos[1],2*PixelsPerMeter + ShipWidth,PixelsPerMeter))
 
 
 # Create the screen
@@ -92,7 +92,7 @@ def MotionY(vY, ThrustY, dT, Mass, dM):
 # background_img = pg.image.load('').convert_alpha    # This will be where we load whatever background image of the moon we get
 
 # Create a current position array for the lander
-CurrentPos = np.array([Xo + X*PixelsPerMeter,Yo - Y*PixelsPerMeter])
+CurrentPos = np.array([Xo + X*PixelsPerMeter, Yo - Y*PixelsPerMeter])
 
 # Create x and y positional change variables
 delX = 0
@@ -104,13 +104,13 @@ while run:
     
     screen.fill((0,0,0))
     
-    # Place the moon
-    pg.draw.rect(screen, (120,120,120), moon)
     # Place the ship
     pg.draw.rect(screen, (50,50,50), shiprect)
     screen.blit(shipimage, shiprect)
+    # Place the moon
+    pg.draw.rect(screen, (120,120,120), moon)
     # Place the win condition
-    pg.draw.rect(screen, (10,128,10), Landing)
+    pg.draw.rect(screen, (10,128,10), LandingZone)
     
     
     #Tring to make it plot a parabola (calculated elsewhere) that shows projected trajectory
@@ -212,14 +212,14 @@ while run:
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep      
                 PathTrack.append([X, Y])
-        if endpos[0]<=CurrentPos[0]<=endpos[0]+2*PixelsPerMeter-ShipWidth and endpos[1]+0.5*PixelsPerMeter>=(CurrentPos[1] + ShipHeight)>=endpos[1]-0.5*PixelsPerMeter and Playtime:
+        if endpos[0] - PixelsPerMeter - 0.5*ShipWidth<=CurrentPos[0]<=endpos[0] + PixelsPerMeter + 0.5*ShipWidth and endpos[1]+0.5*PixelsPerMeter>=(CurrentPos[1] + 50)>=endpos[1]-0.5*PixelsPerMeter and Playtime:
             if np.sqrt(Vy**2+Vx**2) <= 1:
                 print("yay!! :)")
                 Playtime = False
             else:
                 print("You died :(")
                 Playtime = False
-        elif CurrentPos[1]>=700-ShipHeight and not endpos[0]<=CurrentPos[0]<=endpos[0]+2*PixelsPerMeter-ShipWidth:
+        elif CurrentPos[1]>=endpos[1]-50 and not endpos[0]<=CurrentPos[0]<=endpos[0]+2*PixelsPerMeter-ShipWidth:
             if np.sqrt(Vy**2+Vx**2) <= 1:
                 print("You lose >:(")
                 Playtime = False
@@ -231,6 +231,7 @@ while run:
                 #     if Cycle >= 5*len(WreckArt):
                 #         Cycle = 0
                 Playtime = False
+        print(CurrentPos)
     for event in pg.event.get():
         if key[pg.K_p] == True:
             run = False
