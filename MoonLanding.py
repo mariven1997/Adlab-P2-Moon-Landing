@@ -106,7 +106,7 @@ Cycle = 0
 def update(image, Cycle, ts):
     screen.fill((0,0,0))
 #    pg.draw.rect(screen, (0, 0, 0), backrect)
-    #screen.blit(backgroundimg, (0,0))
+    screen.blit(backgroundimg, (0,0))
     pg.draw.rect(screen, (120,120,120), moon)
     pg.draw.rect(screen, (10,128,10), LandingZone)
     screen.blit(pg.image.load(image[Cycle]), shiprect)
@@ -133,7 +133,7 @@ while run:
     screen.fill((0,0,0))
     
     # Place the cold dark vacume of outer space
-    #screen.blit(backgroundimg, (0,0))
+    screen.blit(backgroundimg, (0,0))
     # Place the moon
     pg.draw.rect(screen, (120,120,120), moon)
     # Place the win condition
@@ -168,7 +168,7 @@ while run:
                 if Mass-DryMass>0:
                     Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep
                     Mass += -1*BurnRate*TimeStep
-                    if int(math.floor(LoopBuddy*50)) == int((LoopBuddy*50)):
+                    if int(math.floor(LoopBuddy*50)) == round(LoopBuddy*50,3):
                         update(BurnUpArt,math.floor(LoopBuddy*50)%5,0)
                     
                 else:
@@ -193,7 +193,7 @@ while run:
                     Vx = Vx - Thrust*TimeStep/Mass
                     Mass += -1*BurnRate*TimeStep
                     #update(BurnLeftArt,math.floor(LoopBuddy*50)%5,0)
-                    if int(math.floor(LoopBuddy*50)) == int((LoopBuddy*50)):
+                    if int(math.floor(LoopBuddy*50)) == round(LoopBuddy*50,3):
                         update(BurnLeftArt,math.floor(LoopBuddy*50)%5,0)
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep   
@@ -216,7 +216,7 @@ while run:
                     Vx = Vx + Thrust*TimeStep/Mass
                     Mass += -1*BurnRate*TimeStep
                     #update(BurnRightArt,math.floor(LoopBuddy*50)%5,0)
-                    if int(math.floor(LoopBuddy*50)) == int((LoopBuddy*50)):
+                    if int(math.floor(LoopBuddy*50)) == round(LoopBuddy*50,3):
                         update(BurnRightArt,math.floor(LoopBuddy*50)%5,0)
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep      
@@ -236,7 +236,7 @@ while run:
                     CurrentPos += [0,-math.floor(delY)]
                     delY = delY - math.floor(delY)
                     shipimage = pg.image.load(IdleArt).convert_alpha()
-                if int(math.floor(LoopBuddy*50)) == int((LoopBuddy*50)):
+                if int(math.floor(LoopBuddy*50)) == round(LoopBuddy*50,3):
                     screen.fill((0,0,0))
                     screen.blit(backgroundimg, (0,0))
                     pg.draw.rect(screen, (120,120,120), moon)
