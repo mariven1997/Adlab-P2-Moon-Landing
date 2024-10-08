@@ -57,8 +57,10 @@ PathTrack = [[X, Y]]
 moon = pg.Rect((pos[0],pos[1] + 0.5*PixelsPerMeter,1000,100))
 
 # Create the win condition
-LandingZone = pg.Rect((endpos[0] - 0.5*ShipWidth,endpos[1],2*PixelsPerMeter + ShipWidth,PixelsPerMeter))
+LandingZone = pg.Rect((endpos[0] - PixelsPerMeter,endpos[1],2*PixelsPerMeter + ShipWidth,PixelsPerMeter))
 
+# Test Speck
+TestSpeck = pg.Rect((endpos[0],endpos[1],1,20))
 
 # Create the screen
 screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -125,9 +127,9 @@ while run:
     pg.draw.rect(screen, (120,120,120), moon)
     # Place the win condition
     pg.draw.rect(screen, (10,128,10), LandingZone)
-    if end == 0:
+    if end != 2:
         screen.blit(shipimage, shiprect)
-    
+    pg.draw.rect(screen, (128,10,10),TestSpeck)
     
     #Tring to make it plot a parabola (calculated elsewhere) that shows projected trajectory
     #pg.draw.lines(screen, (50,50,50), False, PathTrack, width=5)
@@ -225,7 +227,7 @@ while run:
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep      
                 PathTrack.append([X, Y])
-        if endpos[0] - PixelsPerMeter - 0.5*ShipWidth<=CurrentPos[0]<=endpos[0] + PixelsPerMeter - 0.5*ShipWidth and endpos[1]+0.5*PixelsPerMeter>=(CurrentPos[1] + 50)>=endpos[1]-0.5*PixelsPerMeter and Playtime:
+        if endpos[0] - PixelsPerMeter<=CurrentPos[0]<=endpos[0] + PixelsPerMeter and endpos[1]+0.5*PixelsPerMeter>=(CurrentPos[1] + 50)>=endpos[1]-0.5*PixelsPerMeter and Playtime:
             if np.sqrt(Vy**2+Vx**2) <= 1:
                 print("yay!! :)")
                 end = 1
@@ -234,7 +236,7 @@ while run:
                 print("You died :(")
                 end = 2
                 Playtime = False
-        elif CurrentPos[1]>=endpos[1]-50 and not endpos[0]<=CurrentPos[0]<=endpos[0]+2*PixelsPerMeter-ShipWidth:
+        elif CurrentPos[1]>=endpos[1]-50 and not endpos[0] - PixelsPerMeter<=CurrentPos[0]<=endpos[0] + PixelsPerMeter:
             if np.sqrt(Vy**2+Vx**2) <= 1:
                 print("You lose >:(")
                 end = 3
