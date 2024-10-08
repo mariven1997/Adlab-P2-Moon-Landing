@@ -79,12 +79,10 @@ Fuel_Panel = pg.font.SysFont('Roboto', 30)
 def MotionX(vX, ThrustX, dT, Mass, dM):
     deltaX = PixelsPerMeter*((vX*dT)+(ThrustX*(dT**2))/(2*(Mass+(dM*TimeStep/2))))
     pg.display.update()
-    t.sleep(0.0001)
     return deltaX
 def MotionY(vY, ThrustY, dT, Mass, dM):
     deltaY = PixelsPerMeter*((vY*dT)+((ThrustY*(dT**2))/(2*(Mass+(dM*TimeStep/2))))-(g*(dT**2)/2))
     pg.display.update()
-    t.sleep(0.0001)
     return deltaY
 
 # load images
@@ -97,6 +95,8 @@ CurrentPos = np.array([Xo + X*PixelsPerMeter, Yo - Y*PixelsPerMeter])
 # Create x and y positional change variables
 delX = 0
 delY = 0
+
+cycle = 0
 
 run = True
 Playtime = True
@@ -212,7 +212,7 @@ while run:
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep      
                 PathTrack.append([X, Y])
-        if endpos[0] - PixelsPerMeter - 0.5*ShipWidth<=CurrentPos[0]<=endpos[0] + PixelsPerMeter + 0.5*ShipWidth and endpos[1]+0.5*PixelsPerMeter>=(CurrentPos[1] + 50)>=endpos[1]-0.5*PixelsPerMeter and Playtime:
+        if endpos[0] - PixelsPerMeter - 0.5*ShipWidth<=CurrentPos[0]<=endpos[0] + PixelsPerMeter - 0.5*ShipWidth and endpos[1]+0.5*PixelsPerMeter>=(CurrentPos[1] + 50)>=endpos[1]-0.5*PixelsPerMeter and Playtime:
             if np.sqrt(Vy**2+Vx**2) <= 1:
                 print("yay!! :)")
                 Playtime = False
@@ -226,16 +226,15 @@ while run:
             else:
                 print("You died :(")
                 # while LoopBuddy < 10000000:
-                #     shipimage = pg.image.load(WreckArt[Cycle % 5]).convert_alpha()
-                #     Cycle +=1
-                #     if Cycle >= 5*len(WreckArt):
-                #         Cycle = 0
+                shipimage = pg.image.load(WreckArt[Cycle % 5]).convert_alpha()
+                Cycle +=1
+                if Cycle >= 5*len(WreckArt):
+                    Cycle = 0
                 Playtime = False
-        print(CurrentPos)
     for event in pg.event.get():
         if key[pg.K_p] == True:
             run = False
-    text_surface = Velocity_Panel.render(f'Current Velocity: {np.sqrt(Vx**2+Vy**2):.3f} m/s, Fuel Mass: {Mass-DryMass:.2f} kg', False, (0, 128, 0))
+    text_surface = Velocity_Panel.render(f'Vx = {Vx:.3f}, Vy = {Vy:.3f}, V = {np.sqrt(Vx**2+Vy**2):.3f} m/s, Fuel Mass: {Mass-DryMass:.2f} kg', False, (0, 128, 0))
     screen.blit(text_surface, (0,0))    
     pg.display.update()
 pg.quit()
