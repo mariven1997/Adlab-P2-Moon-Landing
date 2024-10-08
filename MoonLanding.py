@@ -94,8 +94,8 @@ CurrentPos = np.array([Xo + X*PixelsPerMeter, Yo - Y*PixelsPerMeter])
 
 # Create an update system for images
 Cycle = 0
-def update(image, Cycle):
-    screen.blit(pg.image.load(image[Cycle]), shiprect)
+def update(image, Cycle, obj):
+    screen.blit(pg.image.load(image[Cycle]), obj)
     Cycle += 1
     if Cycle >= 5:
         Cycle = 0
@@ -132,8 +132,9 @@ while run:
     key = pg.key.get_pressed()
     if Playtime:
         # Place the ship
-        pg.draw.rect(screen, (50,50,50), shiprect)
-        screen.blit(shipimage, shiprect)
+        if end == 0:
+            pg.draw.rect(screen, (0,0,0), shiprect)
+            screen.blit(shipimage, shiprect)
         if key[pg.K_s] == True:
             LoopBuddy = 0
             while LoopBuddy <= TurnLength:        
@@ -243,16 +244,10 @@ while run:
                 print("You died :(")
                 end = 2
                 for i in range(0,5):
-                    Cycle = update(WreckArt,Cycle)
-                    # shipimage = pg.image.load(WreckArt[Cycle % 5]).convert_alpha()
-                    # Cycle += 1
-                    # pg.display.update()
-                    # t.sleep(0.1)   
-                    # if Cycle >= 5*len(WreckArt):
-                    #     Cycle = 0
+                    Cycle = update(WreckArt,Cycle,shiprect)
                 Playtime = False
     if end == 2:
-        Cycle = update(WreckArt,Cycle)
+        Cycle = update(WreckArt,Cycle,shiprect)
     for event in pg.event.get():
         if key[pg.K_p] == True:
             run = False
