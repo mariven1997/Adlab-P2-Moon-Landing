@@ -72,7 +72,7 @@ shiprect.topleft = (Xo + X*PixelsPerMeter - 50, Yo - Y*PixelsPerMeter)
 # Create the info dump
 pg.font.init()
 Velocity_Panel = pg.font.SysFont('Roboto', 30)
-Fuel_Panel = pg.font.SysFont('Roboto', 30)
+#Fuel_Panel = pg.font.SysFont('Roboto', 30)
 
 # Defining Position Functions, dM should be negative
 def MotionX(vX, ThrustX, dT, Mass, dM):
@@ -155,7 +155,7 @@ while run:
                 if Mass-DryMass>0:
                     Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep
                     Mass += -1*BurnRate*TimeStep
-                    update(BurnUpArt,math.floor(LoopBuddy*100)%5,0)
+                    update(BurnUpArt,math.floor(LoopBuddy*80)%5,0)
                 else:
                     Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep    
@@ -177,7 +177,7 @@ while run:
                 if Mass-DryMass>0:
                     Vx = Vx - Thrust*TimeStep/Mass
                     Mass += -1*BurnRate*TimeStep
-                    update(BurnLeftArt,math.floor(LoopBuddy*100)%5,0)
+                    update(BurnLeftArt,math.floor(LoopBuddy*80)%5,0)
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep   
                 PathTrack.append([X, Y])
@@ -198,7 +198,7 @@ while run:
                 if Mass-DryMass>0:
                     Vx = Vx + Thrust*TimeStep/Mass
                     Mass += -1*BurnRate*TimeStep
-                    update(BurnRightArt,math.floor(LoopBuddy*100)%5,0)
+                    update(BurnRightArt,math.floor(LoopBuddy*80)%5,0)
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep      
                 PathTrack.append([X, Y])
