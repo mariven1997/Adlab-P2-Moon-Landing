@@ -69,6 +69,7 @@ while Retry:
     # Test Speck
     TestSpeck = pg.Rect((endpos[0],endpos[1],1,20))
     
+    
     # Create the screen
     screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pg.display.set_caption('Moon Lander')
@@ -101,6 +102,10 @@ while Retry:
     # Create a current position array for the lander
     CurrentPos = np.array([Xo + X*PixelsPerMeter, Yo - Y*PixelsPerMeter])
     
+    # Create Path Markers
+    Path = [0]
+    Path[0] = pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3))
+    
     
     # Create an update system for images
     Cycle = 0
@@ -125,6 +130,9 @@ while Retry:
     # Create an ending Variable
     end = 0
     
+    
+    iteration = 1
+    
     # Create x and y positional change variables
     delX = 0
     delY = 0
@@ -132,6 +140,7 @@ while Retry:
     run = True
     Playtime = True
     while run:
+        
         
         if end != 2:
             screen.fill((0,0,0))
@@ -141,6 +150,9 @@ while Retry:
             pg.draw.rect(screen, (120,120,120), moon)
             # Place the win condition
             pg.draw.rect(screen, (10,128,10), LandingZone)
+            # Place path markers
+            for i in range(0,iteration):
+                pg.draw.rect(screen, (128,0,0), Path[i])
             # Place ship
             screen.blit(shipimage, shiprect)
             # Place info dump
@@ -188,6 +200,8 @@ while Retry:
                         Vy = Vy - g*TimeStep
                     LoopBuddy += TimeStep    
                     PathTrack.append([X, Y])
+                Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
+                iteration += 1
             if key[pg.K_a] == True:
                 LoopBuddy = 0
                 while LoopBuddy <= TurnLength:
@@ -220,6 +234,8 @@ while Retry:
                     Vy = Vy - g*TimeStep
                     LoopBuddy += TimeStep   
                     PathTrack.append([X, Y])
+                Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
+                iteration += 1
             if key[pg.K_d] == True:
                 LoopBuddy = 0
                 while LoopBuddy <= TurnLength:
@@ -252,6 +268,8 @@ while Retry:
                     Vy = Vy - g*TimeStep
                     LoopBuddy += TimeStep      
                     PathTrack.append([X, Y])
+                Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
+                iteration += 1
             if key[pg.K_w] == True:
                 LoopBuddy = 0
                 while LoopBuddy <= TurnLength:
@@ -279,6 +297,8 @@ while Retry:
                     Vy = Vy - g*TimeStep
                     LoopBuddy += TimeStep      
                     PathTrack.append([X, Y])
+                Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
+                iteration += 1
             if endpos[0] - PixelsPerMeter<=CurrentPos[0]<=endpos[0] + PixelsPerMeter and endpos[1]+0.5*PixelsPerMeter>=(CurrentPos[1] + 50)>=endpos[1]-0.5*PixelsPerMeter and Playtime:
                 if np.sqrt(Vy**2+Vx**2) <= 1:
                     print("yay!! :)")
