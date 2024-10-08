@@ -96,7 +96,7 @@ CurrentPos = np.array([Xo + X*PixelsPerMeter, Yo - Y*PixelsPerMeter])
 delX = 0
 delY = 0
 
-cycle = 0
+Cycle = 1
 
 run = True
 Playtime = True
@@ -225,16 +225,18 @@ while run:
                 Playtime = False
             else:
                 print("You died :(")
-                # while LoopBuddy < 10000000:
-                shipimage = pg.image.load(WreckArt[Cycle % 5]).convert_alpha()
-                Cycle +=1
-                if Cycle >= 5*len(WreckArt):
-                    Cycle = 0
+                while not Cycle==0:
+                    shipimage = pg.image.load(WreckArt[Cycle % 5]).convert_alpha()
+                    Cycle += 1
+                    pg.display.update()
+                    t.sleep(0.1)   
+                    if Cycle >= 5*len(WreckArt):
+                        Cycle = 0
                 Playtime = False
     for event in pg.event.get():
         if key[pg.K_p] == True:
             run = False
-    text_surface = Velocity_Panel.render(f'Vx = {Vx:.3f}, Vy = {Vy:.3f}, V = {np.sqrt(Vx**2+Vy**2):.3f} m/s, Fuel Mass: {Mass-DryMass:.2f} kg', False, (0, 128, 0))
+    text_surface = Velocity_Panel.render(f'Vx = {-Vx:.3f}, Vy = {Vy:.3f}, V = {np.sqrt(Vx**2+Vy**2):.3f} m/s, Fuel Mass: {Mass-DryMass:.2f} kg', False, (0, 128, 0))
     screen.blit(text_surface, (0,0))    
     pg.display.update()
 pg.quit()
