@@ -26,7 +26,6 @@ pg.init()
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 850
 
-
 # Establishing Variables
 n = 13 #Letter value of last name (13 for m and 15 for o)
 X = -10 #Initial Position, m
@@ -92,11 +91,25 @@ def MotionY(vY, ThrustY, dT, Mass, dM):
 # Create a current position array for the lander
 CurrentPos = np.array([Xo + X*PixelsPerMeter, Yo - Y*PixelsPerMeter])
 
+
+# Create an update system for images
+Cycle = 0
+def update(image, Cycle):
+    screen.blit(pg.image.load(image[Cycle]), shiprect)
+    Cycle += 1
+    if Cycle >= 5:
+        Cycle = 0
+    
+    pg.display.update()
+    t.sleep(0.15)
+    return Cycle
+    
+# Create an ending Variable
+end = 0
+
 # Create x and y positional change variables
 delX = 0
 delY = 0
-
-Cycle = 1
 
 run = True
 Playtime = True
@@ -104,9 +117,6 @@ while run:
     
     screen.fill((0,0,0))
     
-    # Place the ship
-    pg.draw.rect(screen, (50,50,50), shiprect)
-    screen.blit(shipimage, shiprect)
     # Place the moon
     pg.draw.rect(screen, (120,120,120), moon)
     # Place the win condition
@@ -121,6 +131,9 @@ while run:
     
     key = pg.key.get_pressed()
     if Playtime:
+        # Place the ship
+        pg.draw.rect(screen, (50,50,50), shiprect)
+        screen.blit(shipimage, shiprect)
         if key[pg.K_s] == True:
             LoopBuddy = 0
             while LoopBuddy <= TurnLength:        
@@ -215,24 +228,31 @@ while run:
         if endpos[0] - PixelsPerMeter - 0.5*ShipWidth<=CurrentPos[0]<=endpos[0] + PixelsPerMeter - 0.5*ShipWidth and endpos[1]+0.5*PixelsPerMeter>=(CurrentPos[1] + 50)>=endpos[1]-0.5*PixelsPerMeter and Playtime:
             if np.sqrt(Vy**2+Vx**2) <= 1:
                 print("yay!! :)")
+                end = 1
                 Playtime = False
             else:
                 print("You died :(")
+                end = 2
                 Playtime = False
         elif CurrentPos[1]>=endpos[1]-50 and not endpos[0]<=CurrentPos[0]<=endpos[0]+2*PixelsPerMeter-ShipWidth:
             if np.sqrt(Vy**2+Vx**2) <= 1:
                 print("You lose >:(")
+                end = 3
                 Playtime = False
             else:
                 print("You died :(")
-                while not Cycle==0:
-                    shipimage = pg.image.load(WreckArt[Cycle % 5]).convert_alpha()
-                    Cycle += 1
-                    pg.display.update()
-                    t.sleep(0.1)   
-                    if Cycle >= 5*len(WreckArt):
-                        Cycle = 0
+                end = 2
+                for i in range(0,5):
+                    Cycle = update(WreckArt,Cycle)
+                    # shipimage = pg.image.load(WreckArt[Cycle % 5]).convert_alpha()
+                    # Cycle += 1
+                    # pg.display.update()
+                    # t.sleep(0.1)   
+                    # if Cycle >= 5*len(WreckArt):
+                    #     Cycle = 0
                 Playtime = False
+    if end == 2:
+        Cycle = update(WreckArt,Cycle)
     for event in pg.event.get():
         if key[pg.K_p] == True:
             run = False
