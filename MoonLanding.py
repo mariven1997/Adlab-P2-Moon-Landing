@@ -53,6 +53,12 @@ ShipWidth = 34  #In pixels
 # A list that keeps track of positional data for the line plot
 PathTrack = [[X, Y]]
 
+
+# Create space
+backgroundimg = pg.image.load('SpaceBG.png')
+background = backgroundimg.get_rect()
+background.topleft = (0,0)
+
 # Create the moon
 moon = pg.Rect((pos[0],pos[1] + 0.5*PixelsPerMeter,1000,100))
 
@@ -100,6 +106,7 @@ Cycle = 0
 def update(image, Cycle, ts):
     screen.fill((0,0,0))
 #    pg.draw.rect(screen, (0, 0, 0), backrect)
+    #screen.blit(backgroundimg, (0,0))
     pg.draw.rect(screen, (120,120,120), moon)
     pg.draw.rect(screen, (10,128,10), LandingZone)
     screen.blit(pg.image.load(image[Cycle]), shiprect)
@@ -125,13 +132,15 @@ while run:
     
     screen.fill((0,0,0))
     
+    # Place the cold dark vacume of outer space
+    #screen.blit(backgroundimg, (0,0))
     # Place the moon
     pg.draw.rect(screen, (120,120,120), moon)
     # Place the win condition
     pg.draw.rect(screen, (10,128,10), LandingZone)
     if end != 2:
         screen.blit(shipimage, shiprect)
-    pg.draw.rect(screen, (128,10,10),TestSpeck)
+    #pg.draw.rect(screen, (128,10,10),TestSpeck)
     
     #Tring to make it plot a parabola (calculated elsewhere) that shows projected trajectory
     #pg.draw.lines(screen, (50,50,50), False, PathTrack, width=5)
@@ -159,7 +168,7 @@ while run:
                 if Mass-DryMass>0:
                     Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep
                     Mass += -1*BurnRate*TimeStep
-                    update(BurnUpArt,math.floor(LoopBuddy*80)%5,0)
+                    update(BurnUpArt,math.floor(LoopBuddy*50)%5,0)
                 else:
                     Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep    
@@ -181,7 +190,7 @@ while run:
                 if Mass-DryMass>0:
                     Vx = Vx - Thrust*TimeStep/Mass
                     Mass += -1*BurnRate*TimeStep
-                    update(BurnLeftArt,math.floor(LoopBuddy*80)%5,0)
+                    update(BurnLeftArt,math.floor(LoopBuddy*50)%5,0)
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep   
                 PathTrack.append([X, Y])
@@ -202,7 +211,7 @@ while run:
                 if Mass-DryMass>0:
                     Vx = Vx + Thrust*TimeStep/Mass
                     Mass += -1*BurnRate*TimeStep
-                    update(BurnRightArt,math.floor(LoopBuddy*80)%5,0)
+                    update(BurnRightArt,math.floor(LoopBuddy*50)%5,0)
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep      
                 PathTrack.append([X, Y])
@@ -222,6 +231,7 @@ while run:
                     delY = delY - math.floor(delY)
                     shipimage = pg.image.load(IdleArt).convert_alpha()
                 screen.fill((0,0,0))
+                #screen.blit(backgroundimg, (0,0))
                 pg.draw.rect(screen, (120,120,120), moon)
                 pg.draw.rect(screen, (10,128,10), LandingZone)
                 screen.blit(shipimage, shiprect)
