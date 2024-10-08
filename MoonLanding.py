@@ -94,15 +94,19 @@ CurrentPos = np.array([Xo + X*PixelsPerMeter, Yo - Y*PixelsPerMeter])
 
 # Create an update system for images
 Cycle = 0
-def update(image, Cycle, obj):
-    screen.blit(pg.image.load(image[Cycle]), obj)
+def update(image, Cycle, ts):
+    screen.fill((0,0,0))
+    pg.draw.rect(screen, (120,120,120), moon)
+    pg.draw.rect(screen, (10,128,10), LandingZone)
+    screen.blit(pg.image.load(image[Cycle]), shiprect)
     Cycle += 1
     if Cycle >= 5:
         Cycle = 0
     
     pg.display.update()
-    t.sleep(0.15)
+    t.sleep(ts)
     return Cycle
+
     
 # Create an ending Variable
 end = 0
@@ -121,6 +125,8 @@ while run:
     pg.draw.rect(screen, (120,120,120), moon)
     # Place the win condition
     pg.draw.rect(screen, (10,128,10), LandingZone)
+    if end == 0:
+        screen.blit(shipimage, shiprect)
     
     
     #Tring to make it plot a parabola (calculated elsewhere) that shows projected trajectory
@@ -132,9 +138,6 @@ while run:
     key = pg.key.get_pressed()
     if Playtime:
         # Place the ship
-        if end == 0:
-            pg.draw.rect(screen, (0,0,0), shiprect)
-            screen.blit(shipimage, shiprect)
         if key[pg.K_s] == True:
             LoopBuddy = 0
             while LoopBuddy <= TurnLength:        
@@ -152,10 +155,7 @@ while run:
                 if Mass-DryMass>0:
                     Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep
                     Mass += -1*BurnRate*TimeStep
-                    shipimage = pg.image.load(BurnUpArt[Cycle % 5]).convert_alpha()
-                    Cycle +=1
-                    if Cycle >= 5*len(BurnUpArt):
-                        Cycle = 0
+                    update(BurnUpArt,math.floor(LoopBuddy*100)%5,0)
                 else:
                     Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep    
@@ -177,10 +177,7 @@ while run:
                 if Mass-DryMass>0:
                     Vx = Vx - Thrust*TimeStep/Mass
                     Mass += -1*BurnRate*TimeStep
-                    shipimage = pg.image.load(BurnLeftArt[Cycle % 5]).convert_alpha()
-                    Cycle +=1
-                    if Cycle >= 5*len(BurnLeftArt):
-                        Cycle = 0
+                    update(BurnLeftArt,math.floor(LoopBuddy*100)%5,0)
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep   
                 PathTrack.append([X, Y])
@@ -201,10 +198,7 @@ while run:
                 if Mass-DryMass>0:
                     Vx = Vx + Thrust*TimeStep/Mass
                     Mass += -1*BurnRate*TimeStep
-                    shipimage = pg.image.load(BurnRightArt[Cycle % 5]).convert_alpha()
-                    Cycle +=1
-                    if Cycle >= 5*len(BurnRightArt):
-                        Cycle = 0
+                    update(BurnRightArt,math.floor(LoopBuddy*100)%5,0)
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep      
                 PathTrack.append([X, Y])
@@ -223,6 +217,11 @@ while run:
                     CurrentPos += [0,-math.floor(delY)]
                     delY = delY - math.floor(delY)
                     shipimage = pg.image.load(IdleArt).convert_alpha()
+                screen.fill((0,0,0))
+                pg.draw.rect(screen, (120,120,120), moon)
+                pg.draw.rect(screen, (10,128,10), LandingZone)
+                screen.blit(shipimage, shiprect)
+                pg.display.update()
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep      
                 PathTrack.append([X, Y])
@@ -243,11 +242,9 @@ while run:
             else:
                 print("You died :(")
                 end = 2
-                for i in range(0,5):
-                    Cycle = update(WreckArt,Cycle,shiprect)
                 Playtime = False
     if end == 2:
-        Cycle = update(WreckArt,Cycle,shiprect)
+        Cycle = update(WreckArt,Cycle, 0.15)
     for event in pg.event.get():
         if key[pg.K_p] == True:
             run = False
