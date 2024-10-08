@@ -86,7 +86,8 @@ def MotionY(vY, ThrustY, dT, Mass, dM):
 
 # load images
 # Background
-# background_img = pg.image.load('').convert_alpha    # This will be where we load whatever background image of the moon we get
+background = pg.image.load('SpaceBG.png').convert_alpha    # This will be where we load whatever background image of the moon we get
+#backrect = background.get_rect()
 
 # Create a current position array for the lander
 CurrentPos = np.array([Xo + X*PixelsPerMeter, Yo - Y*PixelsPerMeter])
@@ -96,6 +97,7 @@ CurrentPos = np.array([Xo + X*PixelsPerMeter, Yo - Y*PixelsPerMeter])
 Cycle = 0
 def update(image, Cycle, ts):
     screen.fill((0,0,0))
+#    pg.draw.rect(screen, (0, 0, 0), backrect)
     pg.draw.rect(screen, (120,120,120), moon)
     pg.draw.rect(screen, (10,128,10), LandingZone)
     screen.blit(pg.image.load(image[Cycle]), shiprect)
