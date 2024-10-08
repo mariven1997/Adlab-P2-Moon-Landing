@@ -130,7 +130,11 @@ while Retry:
     # Create an ending Variable
     end = 0
     
+    TrajectoryCheck = False
+    Trajectory = np.zeros(90)
+    Trajectory = Trajectory.tolist()
     
+    LoopBuddy = 0
     iteration = 1
     
     # Create x and y positional change variables
@@ -153,6 +157,9 @@ while Retry:
             # Place path markers
             for i in range(0,iteration):
                 pg.draw.rect(screen, (128,0,0), Path[i])
+            if TrajectoryCheck:
+                for i in range(0,90):
+                    pg.draw.rect(screen, (0,0,128), Trajectory[i])
             # Place ship
             screen.blit(shipimage, shiprect)
             # Place info dump
@@ -167,8 +174,32 @@ while Retry:
         
         key = pg.key.get_pressed()
         if Playtime:
+            if key[pg.K_t]:
+                LoopBuddy = 0
+                Trajector = np.array([CurrentPos[0],CurrentPos[1]])
+                delXt = delX
+                delYt = delY
+                Vyt = Vy
+                Vxt = Vx
+                Masst = Mass
+                while LoopBuddy <= 9:
+                    delXt += MotionX(Vxt, 0, TimeStep*10, Mass, 0)
+                    delYt += MotionY(Vyt, 0, TimeStep*10, Mass, 0)
+                    if abs(delXt)>=1:
+                        Trajector += [-math.floor(delXt),0]
+                        delXt = delXt - math.floor(delXt)
+                    if abs(delYt)>=1:
+                        Trajector += [0,-math.floor(delYt)]
+                        delYt = delYt - math.floor(delYt)
+                    Vyt = Vyt - g*TimeStep*10
+                    LoopBuddy += TimeStep*10
+                    if math.floor((LoopBuddy*100))%10 != 90:
+                        Trajectory[math.floor(LoopBuddy*100/10)-1] = pg.Rect((Trajector[0] + 0.5*ShipWidth,Trajector[1] + 0.5*ShipHeight, 2,2))
+                TrajectoryCheck = True
+            
             # Place the ship
             if key[pg.K_s] == True:
+                TrajectoryCheck = False
                 LoopBuddy = 0
                 while LoopBuddy <= TurnLength:        
                     #S key should rotate the engine to face DOWN
@@ -203,6 +234,7 @@ while Retry:
                 Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
                 iteration += 1
             if key[pg.K_a] == True:
+                TrajectoryCheck = False
                 LoopBuddy = 0
                 while LoopBuddy <= TurnLength:
                     #A key should rotate the engine to face RIGHT
@@ -237,6 +269,7 @@ while Retry:
                 Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
                 iteration += 1
             if key[pg.K_d] == True:
+                TrajectoryCheck = False
                 LoopBuddy = 0
                 while LoopBuddy <= TurnLength:
                     #D key should rotate the engine to face LEFT
@@ -271,10 +304,11 @@ while Retry:
                 Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
                 iteration += 1
             if key[pg.K_w] == True:
+                TrajectoryCheck = False
                 LoopBuddy = 0
                 while LoopBuddy <= TurnLength:
                     # W key should wait
-                    delX += MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate)
+                    delX += MotionX(Vx, 0, TimeStep, Mass, 0) #-1*BurnRate)
                     delY += MotionY(Vy, 0, TimeStep, Mass, 0)
                     if abs(delX)>=1:
                         shiprect.move_ip(-math.floor(delX),0)
