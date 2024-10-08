@@ -24,7 +24,7 @@ pg.init()
 
 # Create the height and width of the window that the game runs in
 SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 800
+SCREEN_HEIGHT = 850
 
 
 # Establishing Variables
@@ -37,15 +37,15 @@ DryMass = (1 + 0.1*n%5)*10**4 #Initial mass, kg
 FMass = 4*(1 + 0.1*n%6)*10**3 #Initial mass of the fuel
 Thrust = 4.8*(1 + 0.05*n%4)*10**4 #Thrust supplied by the engine
 BurnRate = 500 #Fuel burn rate, kg/s
-pos = np.array([0,700])
+pos = np.array([0,SCREEN_HEIGHT - 100])
 g = 1.62 # m/s^2
 EngineIsFiring = False
 EngineOrientation = "D"
 TimeStep = 0.001
 TurnLength = 0.3
-PixelsPerMeter = 30
+PixelsPerMeter = 8
 Xo = SCREEN_WIDTH/2 # in pixels
-Yo = 700 # "   "
+Yo = SCREEN_HEIGHT - 100 # "   "
 Mass = DryMass + FMass
 endpos = np.array([Xo+10*PixelsPerMeter,Yo])
 ShipHeight = 54  #In pixels
@@ -68,7 +68,7 @@ pg.display.set_caption('Moon Lander')
 # Establishes ship as a rectangle and also gives it a graphics
 shipimage = pg.image.load(IdleArt).convert_alpha()
 shiprect = shipimage.get_rect()
-shiprect.topleft = (-50, 50)
+shiprect.topleft = (Xo + X*PixelsPerMeter - 50, Yo - Y*PixelsPerMeter)
 
 # Create the info dump
 pg.font.init()
@@ -92,7 +92,7 @@ def MotionY(vY, ThrustY, dT, Mass, dM):
 # background_img = pg.image.load('').convert_alpha    # This will be where we load whatever background image of the moon we get
 
 # Create a current position array for the lander
-CurrentPos = np.array([0.,50.])
+CurrentPos = np.array([Xo + X*PixelsPerMeter,Yo - Y*PixelsPerMeter])
 
 # Create x and y positional change variables
 delX = 0
@@ -225,11 +225,11 @@ while run:
                 Playtime = False
             else:
                 print("You died :(")
-                while LoopBuddy < 10000000:
-                    shipimage = pg.image.load(WreckArt[Cycle % 5]).convert_alpha()
-                    Cycle +=1
-                    if Cycle >= 5*len(WreckArt):
-                        Cycle = 0
+                # while LoopBuddy < 10000000:
+                #     shipimage = pg.image.load(WreckArt[Cycle % 5]).convert_alpha()
+                #     Cycle +=1
+                #     if Cycle >= 5*len(WreckArt):
+                #         Cycle = 0
                 Playtime = False
     for event in pg.event.get():
         if key[pg.K_p] == True:
