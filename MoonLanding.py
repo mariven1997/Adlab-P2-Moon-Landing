@@ -168,7 +168,9 @@ while run:
                 if Mass-DryMass>0:
                     Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep
                     Mass += -1*BurnRate*TimeStep
-                    update(BurnUpArt,math.floor(LoopBuddy*50)%5,0)
+                    if int(math.floor(LoopBuddy*50)) == int((LoopBuddy*50)):
+                        update(BurnUpArt,math.floor(LoopBuddy*50)%5,0)
+                    
                 else:
                     Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep    
@@ -190,7 +192,9 @@ while run:
                 if Mass-DryMass>0:
                     Vx = Vx - Thrust*TimeStep/Mass
                     Mass += -1*BurnRate*TimeStep
-                    update(BurnLeftArt,math.floor(LoopBuddy*50)%5,0)
+                    #update(BurnLeftArt,math.floor(LoopBuddy*50)%5,0)
+                    if int(math.floor(LoopBuddy*50)) == int((LoopBuddy*50)):
+                        update(BurnLeftArt,math.floor(LoopBuddy*50)%5,0)
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep   
                 PathTrack.append([X, Y])
@@ -211,7 +215,9 @@ while run:
                 if Mass-DryMass>0:
                     Vx = Vx + Thrust*TimeStep/Mass
                     Mass += -1*BurnRate*TimeStep
-                    update(BurnRightArt,math.floor(LoopBuddy*50)%5,0)
+                    #update(BurnRightArt,math.floor(LoopBuddy*50)%5,0)
+                    if int(math.floor(LoopBuddy*50)) == int((LoopBuddy*50)):
+                        update(BurnRightArt,math.floor(LoopBuddy*50)%5,0)
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep      
                 PathTrack.append([X, Y])
@@ -230,12 +236,13 @@ while run:
                     CurrentPos += [0,-math.floor(delY)]
                     delY = delY - math.floor(delY)
                     shipimage = pg.image.load(IdleArt).convert_alpha()
-                screen.fill((0,0,0))
-                #screen.blit(backgroundimg, (0,0))
-                pg.draw.rect(screen, (120,120,120), moon)
-                pg.draw.rect(screen, (10,128,10), LandingZone)
-                screen.blit(shipimage, shiprect)
-                pg.display.update()
+                if int(math.floor(LoopBuddy*50)) == int((LoopBuddy*50)):
+                    screen.fill((0,0,0))
+                    screen.blit(backgroundimg, (0,0))
+                    pg.draw.rect(screen, (120,120,120), moon)
+                    pg.draw.rect(screen, (10,128,10), LandingZone)
+                    screen.blit(shipimage, shiprect)
+                    pg.display.update()
                 Vy = Vy - g*TimeStep
                 LoopBuddy += TimeStep      
                 PathTrack.append([X, Y])
