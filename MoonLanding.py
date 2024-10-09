@@ -1,8 +1,8 @@
-
-import pygame as pg
-import numpy as np
-import time as t
-import math
+# Importing all the needed packages
+import pygame as pg # Pygame is needed to create the game itself, not for any of the math. We could have also done this in a pychart, but we chose the hard way
+import numpy as np # Numpy is needed for many of the calculations
+import time as t # Time is used very little, but improves the look of some of the animations by making them take longer
+import math # Math is used for some of the calculations
 #TODO
 # Stop thrust when fuel is empty
 # Detect Hitting the Ground
@@ -12,8 +12,11 @@ import math
 # Desired Landing Site
 #
 
-Retry = True
+
+Retry = True # Retry is a boolian function that allows the game to repeat when r is pressed, but end when p is pressed
 while Retry:
+    
+    # Import all of the various moon lander images (used to animate the player's moon lander module)
     BurnRightArt = ["R1.png", "R2.png", "R3.png", "R4.png", "R5.png"]
     BurnLeftArt = ["L1.png", "L2.png", "L3.png", "L4.png", "L5.png"]
     BurnUpArt = ["V1.png", "V2.png", "V3.png", "V4.png", "V5.png"]
@@ -31,8 +34,8 @@ while Retry:
     n = 13 #Letter value of last name (13 for m and 15 for o)
     X = -10 #Initial Position, m
     Y = 30*(1. + 4.*n%5) #Inital Altitude, m
-    Vx = 0 #Initial velocity, m/s
-    Vy = 0 #Initial velocity, m/s
+    Vx = 0 #Initial velocity in x, m/s
+    Vy = 0 #Initial velocity in y, m/s
     DryMass = (1 + 0.1*n%5)*10**4 #Initial mass, kg
     FMass = 4*(1 + 0.1*n%6)*10**3 #Initial mass of the fuel
     Thrust = 4.8*(1 + 0.05*n%4)*10**4 #Thrust supplied by the engine
