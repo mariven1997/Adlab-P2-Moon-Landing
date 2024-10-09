@@ -30,32 +30,30 @@ while Retry:
     SCREEN_WIDTH = 600
     SCREEN_HEIGHT = 850
     
-    # Establishing Variables
+    # Establishing Variables: ", " means "measured in" (ie: "mass measured in kg" would be "mass, kg")
     n = 13 #Letter value of last name (13 for m and 15 for o)
     X = -10 #Initial Position, m
     Y = 30*(1. + 4.*n%5) #Inital Altitude, m
     Vx = 0 #Initial velocity in x, m/s
     Vy = 0 #Initial velocity in y, m/s
-    DryMass = (1 + 0.1*n%5)*10**4 #Initial mass, kg
-    FMass = 4*(1 + 0.1*n%6)*10**3 #Initial mass of the fuel
-    Thrust = 4.8*(1 + 0.05*n%4)*10**4 #Thrust supplied by the engine
+    DryMass = (1 + 0.1*n%5)*10**4 #Dry mass, kg
+    FMass = 4*(1 + 0.1*n%6)*10**3 #Initial mass of the fuel, kg
+    Thrust = 4.8*(1 + 0.05*n%4)*10**4 #Thrust supplied by the engine, N
     BurnRate = 500 #Fuel burn rate, kg/s
-    pos = np.array([0,SCREEN_HEIGHT - 100])
-    g = 1.62 # m/s^2
-    EngineIsFiring = False
-    EngineOrientation = "D"
-    TimeStep = 0.001
-    TurnLength = 0.3
-    PixelsPerMeter = 8
-    Xo = SCREEN_WIDTH/2 # in pixels
-    Yo = SCREEN_HEIGHT - 100 # "   "
-    Mass = DryMass + FMass
-    endpos = np.array([Xo+10*PixelsPerMeter,Yo])
-    ShipHeight = 54  #In pixels
-    ShipWidth = 34  #In pixels
+    # pos = np.array([0,SCREEN_HEIGHT - 100]) ## Variable that didn't end up being used. It was originally used to place the old moon, which was just a grey square. We have kept it in as a vestage, but it does not impact the code at this point.
+    g = 1.62 # Gravitational acceleration near the moon's surface, m/s^2
+    TimeStep = 0.001 # The period of time used as the steps in the Euler Approximations for the motion calculations. 0.001 was used as a very small time step to create low error in the approximation within every calculation.
+    TurnLength = 0.3 # The period of each "turn." Turns constitute the time after a button is pressed (w, a, s, or d)
+    PixelsPerMeter = 8 # The number of pixels in each meter of space
+    Xo = SCREEN_WIDTH/2 # The x position of the origin point of the calculations in the coordinate system of the screen in pixels. The screen has an origin point at the top left corner, x increasing to the right, and y down the screen.
+    Yo = SCREEN_HEIGHT - 100 # "    " The same as above but with y. We placed it at 100 pixels above the bottom to have enough visible space to be comfortable, but not so much that the initial position was off the screen.
+    Mass = DryMass + FMass # Total initial mass, kg
+    endpos = np.array([Xo+10*PixelsPerMeter,Yo]) # This is a vector that tells the computer the end position as a function of the Xo and the Yo, as well as the intended landing position (10 meters) multiplied by pixels per meter to scale the displacement to the correct size.
+    ShipHeight = 54  # The height of the physical body of the ship, pixels
+    ShipWidth = 34  # The width of the physical body of the ship, pixels
     
-    # A list that keeps track of positional data for the line plot
-    PathTrack = [[X, Y]]
+    # Create a list that keeps track of positional data for the line plot
+    #PathTrack = [[X, Y]] # P
     
     
     # Create space
@@ -179,8 +177,7 @@ while Retry:
             screen.blit(Velocity_Panel.render(f'Current Velocity: Vx = {-Vx:.3f}, Vy = {Vy:.3f}, V = {np.sqrt(Vx**2+Vy**2):.3f} m/s', False, (0, 128, 0)), (0,0))
             screen.blit(Fuel_Panel.render(f'Fuel Mass: {Mass-DryMass:.2f} kg', False, (0, 128, 0)), (0,30))
         
-        #Tring to make it plot a parabola (calculated elsewhere) that shows projected trajectory
-        #pg.draw.lines(screen, (50,50,50), False, PathTrack, width=5)
+        
         
         
         
@@ -247,7 +244,7 @@ while Retry:
                     else:
                         Vy = Vy - g*TimeStep
                     LoopBuddy += TimeStep    
-                    PathTrack.append([X, Y])
+                    #PathTrack.append([X, Y])
                 Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
                 iteration += 1
             if key[pg.K_a] == True:
@@ -286,7 +283,7 @@ while Retry:
                         pg.display.update()
                     Vy = Vy - g*TimeStep
                     LoopBuddy += TimeStep   
-                    PathTrack.append([X, Y])
+                    #PathTrack.append([X, Y])
                 Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
                 iteration += 1
             if key[pg.K_d] == True:
@@ -325,7 +322,7 @@ while Retry:
                         pg.display.update()
                     Vy = Vy - g*TimeStep
                     LoopBuddy += TimeStep      
-                    PathTrack.append([X, Y])
+                    #PathTrack.append([X, Y])
                 Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
                 iteration += 1
             if key[pg.K_w] == True:
@@ -362,7 +359,7 @@ while Retry:
                         pg.display.update()
                     Vy = Vy - g*TimeStep
                     LoopBuddy += TimeStep      
-                    PathTrack.append([X, Y])
+                    #PathTrack.append([X, Y])
                 Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
                 iteration += 1
             if endpos[0] - PixelsPerMeter<=CurrentPos[0]<=endpos[0] + PixelsPerMeter and endpos[1]+0.5*PixelsPerMeter>=(CurrentPos[1] + 50)>=endpos[1]-0.5*PixelsPerMeter and Playtime:
@@ -384,7 +381,7 @@ while Retry:
                     end = 2
                     Playtime = False
         if end == 2:
-            Cycle = update(WreckArt,Cycle, 0.15)
+            Cycle = update(WreckArt,Cycle, 0.1)
         for event in pg.event.get():
             if key[pg.K_p]:
                 run = False 
