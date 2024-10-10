@@ -106,7 +106,7 @@ while Retry:
         pg.draw.rect(screen, (10,128,10), LandingZone) # draw the landing zone
         for i in range(0,iteration): # create a for loop to draw all of the path markers in their respective locations on the screen (iteration is set as a variable later)
             pg.draw.rect(screen, (128,0,0), Path[i])
-        if TrajectoryCheck: # if trajectory has been toggeled using the t butten, run through a for loop that draws the 90 points of the trajectory line, showing you 30 wait actions into the future.
+        if TrajectoryCheck: # if trajectory has been toggled using the t butten, run through a for loop that draws the 90 points of the trajectory line, showing you 30 wait actions into the future.
             for i in range(0,90):
                 pg.draw.rect(screen, (0,0,128), Trajectory[i])
         if image != shipimage: # This makes it so that the idle image for the ship can be used in this function along side the animated versions.
@@ -127,7 +127,7 @@ while Retry:
     end = 0
     
     # Create variables for the trajectory tracker
-    TrajectoryCheck = False # Create a checker to see if trajectory has been toggeled
+    TrajectoryCheck = False # Create a checker to see if trajectory has been toggled
     Trajectory = [0]*90 # Create a list of 90 values, which will be filled with the 2 by 2 squares that make up the trajectory line. These values also carry the position values for these trajectory markers
     
     
@@ -153,39 +153,41 @@ while Retry:
     
         key = pg.key.get_pressed() # This looks for keypresses
         if key[pg.K_t]: # If t is pressed, the trajectory tracker is activated
-            if TrajectoryCheck: # 
+            if TrajectoryCheck: # this if/else statment acts as a toggle for the trajectory indicator. Switching TrajectoryCheck to true makes the trajectory line show, whereas switching it to false makes the line not display
                 TrajectoryCheck = False
             else:
                 TrajectoryCheck = True
-            t.sleep(0.15)
-        LoopBuddy = 0
-        Trajector = np.array([CurrentPos[0],CurrentPos[1]])
-        delXt = delX
+            t.sleep(0.15) # This time delay is put in so that if t is pressed, the game does not read the input multiple times. This could have been done better in other ways, but this way works well enough and does not impact the game or calculations, so we chose the easier solution
+        
+        # The trajectory is calculated every time the game loops through. It is low intensity, so it does not slow down the game (now that we optimised it)
+        LoopBuddy = 0 # Loop budy is set to zero to start the process of the while loop that comes later
+        Trajector = np.array([CurrentPos[0],CurrentPos[1]]) # Trajector is an array that is used in calculating the trajectory. It is set to the current value of the CurrentPos vector. We could not have set it equal to the vector itself because when we did, the CurrentPos vector was also adjusted, which was not expected
+        delXt = delX # delXt and delYt are values that are used as small displacements for the euler approximation used in the trajectory calculator. They are set to the values of delX and delY because delX and delY are not fully used every time the ship moves. This is because the ship cannot move between pixels, and so we only use the displacement values of delX and delY when they are above 1, after which the displacement is subtracted from the delX or delY. This way, no information is lost because of pixel size being discrete. delX and delY are both measured in pixels.
         delYt = delY
-        Vyt = Vy
+        Vyt = Vy # Vyt and Vxt are set to the current velocities in the x and y directions, so that the actual velocities are not changed during the trajectory calculations
         Vxt = Vx
-        Masst = Mass
-        while LoopBuddy <= 9:
-            delXt += MotionX(Vxt, 0, TimeStep, Mass, 0)
-            delYt += MotionY(Vyt, 0, TimeStep, Mass, 0)
-            if abs(delXt)>=1:
-                Trajector += [-math.floor(delXt),0]
-                delXt = delXt - math.floor(delXt)
-            if abs(delYt)>=1:
+        Masst = Mass # Masst is set to Mass for the same reason as with Vyt and Vxt
+        counter = 0
+        while LoopBuddy < 9: # This while loop is used to make the Euler approximation. The trajectory loop iterates 9000 times, effectively giving you a look 30 turns into the future assuming you use no thrust.
+            delXt += MotionX(Vxt, 0, TimeStep, Mass, 0) # These statements set delXt and delYt equal to the the sum of themselves and the motion functions given the velocity at that time step, the length of the time step, and the current mass. The 0s are for thrust and burnrate, which are only needed in the function if you are thrusting (which the trajectory does not account for intentionally)
+            delYt += MotionY(Vyt, 0, TimeStep, Mass, 0) # as stated before, both delYt and delXt are measured in pixels as float values
+            if abs(delXt)>=1: # if either delX or delY are at or above 1 pixel in the size of the displacement, the ship is moved on the screen. This makes the ship's position on the screen an approximation, but because pixels exist, this is necessary. In the trajectory calculations, this same method is used to track the placement of the markers, since they must also be placed at integer locations on the screen (the game would break if you placed them based on a float)
+                Trajector += [-math.floor(delXt),0] # every time the if statement is passed, the trajector vector is altered by the floor of the value of delXt (or delYt in the delYt if statement). This makes it so that the trajector vector is always at integer values so that it does not cause errors.
+                delXt = delXt - math.floor(delXt) # to keep consistant, the delXt and delYt variables have whatever value is not large enough to change the position on the screen saved. This makes it so that the information is not lost during the calculations. Even if it is small during each step, with hundreds (or thousands) of steps, the information adds up quite a lot.
+            if abs(delYt)>=1: # This statement is the same as the last one but with delYt
                 Trajector += [0,-math.floor(delYt)]
                 delYt = delYt - math.floor(delYt)
-            Vyt = Vyt - g*TimeStep#*10
-            LoopBuddy += TimeStep#*10
-            if math.floor((LoopBuddy*100))%10 != 90:
-                Trajectory[math.floor(LoopBuddy*100/10)-1] = pg.Rect((Trajector[0] + 0.5*ShipWidth,Trajector[1] + 0.5*ShipHeight, 2,2))
-        if Playtime:
+            Vyt = Vyt - g*TimeStep # Vyt is updated based on the acceleration due to gravity by the end of the time step. Vxt is not changed because it is uneffected by any values in the trajectory calculations
+            Trajectory[math.floor(LoopBuddy*10)] = pg.Rect((Trajector[0] + 0.5*ShipWidth,Trajector[1] + 0.5*ShipHeight, 2,2)) # The 90 values of the trajectory vector are placed in one at a time.
+            LoopBuddy += TimeStep # LoopBuddy is increased by the time step. Once this value reaches 9 on the 9000th iteration, this value ends the while loop
+        if Playtime: # When Playtime is false, the controls are locked. This happens when the game ends. Only the r, p, and t buttons are still functional
             
-            
-            # Place the ship
-            if key[pg.K_s] == True:
-                Burn = True
-                LoopBuddy = 0
-                while LoopBuddy <= TurnLength:        
+            # The next three large if statements all do the same basic thing. Each one is a statement that thrusts in a direction based on the key pressed.
+            # s is for thrust downward
+            if key[pg.K_s] == True: # if s is pressed, this statement activates. This constitutes a turn (0.3 seconds).
+                Burn = True # Burn is set to true so that the first idle frame is skipped on the next turn (purely visual as explained earlier)
+                LoopBuddy = 0 # LoopBuddy is set to zero to start the while loop fresh
+                while LoopBuddy < TurnLength:  # This works the same as the trajectory calculation, but here, only 300 calculations are made, coresponding to       
                     #S key should rotate the engine to face DOWN
                     delX += MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate)
                     delY += MotionY(Vy, Thrust, TimeStep, Mass, -1*BurnRate)
@@ -209,10 +211,12 @@ while Retry:
                     LoopBuddy += TimeStep   
                 Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
                 iteration += 1
+                
+            # a is for thrust left    
             if key[pg.K_a] == True:
                 Burn = True
                 LoopBuddy = 0
-                while LoopBuddy <= TurnLength:
+                while LoopBuddy < TurnLength:
                     #A key should rotate the engine to face RIGHT
                     delX += MotionX(Vx, -1*Thrust, TimeStep, Mass, -1*BurnRate)
                     delY += MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)
@@ -235,10 +239,12 @@ while Retry:
                     LoopBuddy += TimeStep   
                 Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
                 iteration += 1
+                
+            # d is for thrust right
             if key[pg.K_d] == True:
                 Burn = True
                 LoopBuddy = 0
-                while LoopBuddy <= TurnLength:
+                while LoopBuddy < TurnLength:
                     #D key should rotate the engine to face LEFT
                     delX += MotionX(Vx, Thrust, TimeStep, Mass, -1*BurnRate)
                     delY += MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)
@@ -263,7 +269,7 @@ while Retry:
                 iteration += 1
             if key[pg.K_w] == True:
                 LoopBuddy = 0
-                while LoopBuddy <= TurnLength:
+                while LoopBuddy < TurnLength:
                     # W key should wait
                     delX += MotionX(Vx, 0, TimeStep, Mass, 0)
                     delY += MotionY(Vy, 0, TimeStep, Mass, 0)
