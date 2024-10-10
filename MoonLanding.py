@@ -99,17 +99,20 @@ while Retry:
     
     # Create an update system for images
     Cycle = 0 # create a variable for tracking which image is being used in an animation
-    def update(image, Cycle, ts): # This function updates the screen whenever an animation happens. It fills 
-        screen.blit(backgroundimg, (0,0))
-        screen.blit(moonimg, moon)
-        pg.draw.rect(screen, (128,0,0), Moonsurface)
-        pg.draw.rect(screen, (10,128,10), LandingZone)
-        for i in range(0,iteration):
+    def update(image, Cycle, ts): # This function updates the screen whenever an animation happens by redrawing all of the objects.
+        screen.blit(backgroundimg, (0,0)) # draw the background on the screen
+        screen.blit(moonimg, moon) # draw the moon
+        pg.draw.rect(screen, (128,0,0), Moonsurface) # draw the line that shows the moon's surface
+        pg.draw.rect(screen, (10,128,10), LandingZone) # draw the landing zone
+        for i in range(0,iteration): # create a for loop to draw all of the path markers in their respective locations on the screen (iteration is set as a variable later)
             pg.draw.rect(screen, (128,0,0), Path[i])
-        if TrajectoryCheck:
+        if TrajectoryCheck: # if trajectory has been toggeled using the t butten, run through a for loop that draws the 90 points of the trajectory line
             for i in range(0,90):
                 pg.draw.rect(screen, (0,0,128), Trajectory[i])
-        screen.blit(pg.image.load(image[Cycle]), shiprect)
+        if image != shipimage:
+            screen.blit(pg.image.load(image[Cycle]), shiprect)
+        else:
+            screen.blit(shipimage, shiprect)
         screen.blit(Velocity_Panel.render(f'Current Velocity: Vx = {-Vx:.3f}, Vy = {Vy:.3f}, V = {np.sqrt(Vx**2+Vy**2):.3f} m/s', False, (0, 128, 0)), (0,0))
         screen.blit(Fuel_Panel.render(f'Fuel Mass: {Mass-DryMass:.2f} kg', False, (0, 128, 0)), (0,30))
         Cycle += 1
@@ -135,37 +138,19 @@ while Retry:
     delX = 0
     delY = 0
     
+    Burn = False
+    
     run = True
     Playtime = True
     while run:
         
         
         if end != 2:
-            # Place the cold dark vacume of outer space
-            screen.blit(backgroundimg, (0,0))
-            # Place the moon
-            screen.blit(moonimg, moon)
-            # Place moon surface indicator
-            pg.draw.rect(screen, (128,0,0), Moonsurface)
-            # Place the win condition
-            pg.draw.rect(screen, (10,128,10), LandingZone)
-            # Place path markers
-            for i in range(0,iteration):
-                pg.draw.rect(screen, (128,0,0), Path[i])
-            if TrajectoryCheck:
-                for i in range(0,90):
-                    pg.draw.rect(screen, (0,0,128), Trajectory[i])
-            # Place ship
-            screen.blit(shipimage, shiprect)
-            # Place info dump
-            screen.blit(Velocity_Panel.render(f'Current Velocity: Vx = {-Vx:.3f}, Vy = {Vy:.3f}, V = {np.sqrt(Vx**2+Vy**2):.3f} m/s', False, (0, 128, 0)), (0,0))
-            screen.blit(Fuel_Panel.render(f'Fuel Mass: {Mass-DryMass:.2f} kg', False, (0, 128, 0)), (0,30))
-        
-        
-        
-        
-        
-        
+            if Burn:
+                Burn = False
+            else:
+                update(shipimage, 4, 0)
+    
         key = pg.key.get_pressed()
         if key[pg.K_t]:
             if TrajectoryCheck:
@@ -181,16 +166,16 @@ while Retry:
         Vxt = Vx
         Masst = Mass
         while LoopBuddy <= 9:
-            delXt += MotionX(Vxt, 0, TimeStep*10, Mass, 0)
-            delYt += MotionY(Vyt, 0, TimeStep*10, Mass, 0)
+            delXt += MotionX(Vxt, 0, TimeStep, Mass, 0)
+            delYt += MotionY(Vyt, 0, TimeStep, Mass, 0)
             if abs(delXt)>=1:
                 Trajector += [-math.floor(delXt),0]
                 delXt = delXt - math.floor(delXt)
             if abs(delYt)>=1:
                 Trajector += [0,-math.floor(delYt)]
                 delYt = delYt - math.floor(delYt)
-            Vyt = Vyt - g*TimeStep*10
-            LoopBuddy += TimeStep*10
+            Vyt = Vyt - g*TimeStep#*10
+            LoopBuddy += TimeStep#*10
             if math.floor((LoopBuddy*100))%10 != 90:
                 Trajectory[math.floor(LoopBuddy*100/10)-1] = pg.Rect((Trajector[0] + 0.5*ShipWidth,Trajector[1] + 0.5*ShipHeight, 2,2))
         if Playtime:
@@ -198,6 +183,7 @@ while Retry:
             
             # Place the ship
             if key[pg.K_s] == True:
+                Burn = True
                 LoopBuddy = 0
                 while LoopBuddy <= TurnLength:        
                     #S key should rotate the engine to face DOWN
@@ -217,26 +203,14 @@ while Retry:
                         if int(math.floor(LoopBuddy*120/3)) == round(LoopBuddy*120/3,3):
                             update(BurnUpArt,math.floor(LoopBuddy*120/3)%5,0.025)
                     elif int(math.floor(LoopBuddy*120/3)) == round(LoopBuddy*120/3,3):
-                        screen.blit(backgroundimg, (0,0))
-                        screen.blit(moonimg, moon)
-                        pg.draw.rect(screen, (128,0,0), Moonsurface)
-                        pg.draw.rect(screen, (10,128,10), LandingZone)
-                        for i in range(0,iteration):
-                            pg.draw.rect(screen, (128,0,0), Path[i])
-                        if TrajectoryCheck:
-                            for i in range(0,90):
-                                pg.draw.rect(screen, (0,0,128), Trajectory[i])
-                        screen.blit(shipimage, shiprect)
-                        screen.blit(Velocity_Panel.render(f'Current Velocity: Vx = {-Vx:.3f}, Vy = {Vy:.3f}, V = {np.sqrt(Vx**2+Vy**2):.3f} m/s', False, (0, 128, 0)), (0,0))
-                        screen.blit(Fuel_Panel.render(f'Fuel Mass: {Mass-DryMass:.2f} kg', False, (0, 128, 0)), (0,30))
-                        pg.display.update()
-                        t.sleep(0.015)
+                        update(shipimage, 4, 0.025)
                     else:
                         Vy = Vy - g*TimeStep
                     LoopBuddy += TimeStep   
                 Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
                 iteration += 1
             if key[pg.K_a] == True:
+                Burn = True
                 LoopBuddy = 0
                 while LoopBuddy <= TurnLength:
                     #A key should rotate the engine to face RIGHT
@@ -256,25 +230,13 @@ while Retry:
                         if int(math.floor(LoopBuddy*120/3)) == round(LoopBuddy*120/3,3):
                             update(BurnLeftArt,math.floor(LoopBuddy*120/3)%5,0.025)
                     elif int(math.floor(LoopBuddy*120/3)) == round(LoopBuddy*120/3,3):
-                        screen.blit(backgroundimg, (0,0))
-                        screen.blit(moonimg, moon)
-                        pg.draw.rect(screen, (128,0,0), Moonsurface)
-                        pg.draw.rect(screen, (10,128,10), LandingZone)
-                        for i in range(0,iteration):
-                            pg.draw.rect(screen, (128,0,0), Path[i])
-                        if TrajectoryCheck:
-                            for i in range(0,90):
-                                pg.draw.rect(screen, (0,0,128), Trajectory[i])
-                        screen.blit(shipimage, shiprect)
-                        screen.blit(Velocity_Panel.render(f'Current Velocity: Vx = {-Vx:.3f}, Vy = {Vy:.3f}, V = {np.sqrt(Vx**2+Vy**2):.3f} m/s', False, (0, 128, 0)), (0,0))
-                        screen.blit(Fuel_Panel.render(f'Fuel Mass: {Mass-DryMass:.2f} kg', False, (0, 128, 0)), (0,30))
-                        pg.display.update()
-                        t.sleep(0.015)
+                        update(shipimage, 4, 0.025)
                     Vy = Vy - g*TimeStep
                     LoopBuddy += TimeStep   
                 Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
                 iteration += 1
             if key[pg.K_d] == True:
+                Burn = True
                 LoopBuddy = 0
                 while LoopBuddy <= TurnLength:
                     #D key should rotate the engine to face LEFT
@@ -294,20 +256,7 @@ while Retry:
                         if int(math.floor(LoopBuddy*120/3)) == round(LoopBuddy*120/3,3):
                             update(BurnRightArt,math.floor(LoopBuddy*120/3)%5,0.025)
                     elif int(math.floor(LoopBuddy*120/3)) == round(LoopBuddy*120/3,3):
-                        screen.blit(backgroundimg, (0,0))
-                        screen.blit(moonimg, moon)
-                        pg.draw.rect(screen, (128,0,0), Moonsurface)
-                        pg.draw.rect(screen, (10,128,10), LandingZone)
-                        for i in range(0,iteration):
-                            pg.draw.rect(screen, (128,0,0), Path[i])
-                        if TrajectoryCheck:
-                            for i in range(0,90):
-                                pg.draw.rect(screen, (0,0,128), Trajectory[i])
-                        screen.blit(shipimage, shiprect)
-                        screen.blit(Velocity_Panel.render(f'Current Velocity: Vx = {-Vx:.3f}, Vy = {Vy:.3f}, V = {np.sqrt(Vx**2+Vy**2):.3f} m/s', False, (0, 128, 0)), (0,0))
-                        screen.blit(Fuel_Panel.render(f'Fuel Mass: {Mass-DryMass:.2f} kg', False, (0, 128, 0)), (0,30))
-                        pg.display.update()
-                        t.sleep(0.015)
+                        update(shipimage, 4, 0.025)
                     Vy = Vy - g*TimeStep
                     LoopBuddy += TimeStep   
                 Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
@@ -328,20 +277,7 @@ while Retry:
                         delY = delY - math.floor(delY)
                         shipimage = pg.image.load(IdleArt).convert_alpha()
                     if int(math.floor(LoopBuddy*120/3)) == round(LoopBuddy*120/3,3):
-                        screen.blit(backgroundimg, (0,0))
-                        screen.blit(moonimg, moon)
-                        pg.draw.rect(screen, (128,0,0), Moonsurface)
-                        pg.draw.rect(screen, (10,128,10), LandingZone)
-                        for i in range(0,iteration):
-                            pg.draw.rect(screen, (128,0,0), Path[i])
-                        if TrajectoryCheck:
-                            for i in range(0,90):
-                                pg.draw.rect(screen, (0,0,128), Trajectory[i])
-                        screen.blit(shipimage, shiprect)
-                        screen.blit(Velocity_Panel.render(f'Current Velocity: Vx = {-Vx:.3f}, Vy = {Vy:.3f}, V = {np.sqrt(Vx**2+Vy**2):.3f} m/s', False, (0, 128, 0)), (0,0))
-                        screen.blit(Fuel_Panel.render(f'Fuel Mass: {Mass-DryMass:.2f} kg', False, (0, 128, 0)), (0,30))
-                        pg.display.update()
-                        t.sleep(0.025)
+                        update(shipimage, 4, 0.025)
                     Vy = Vy - g*TimeStep
                     LoopBuddy += TimeStep   
                 Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
