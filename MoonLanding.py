@@ -42,7 +42,7 @@ while Retry:
     BurnRate = 500 #Fuel burn rate, kg/s
     g = 1.62 # Gravitational acceleration near the moon's surface, m/s^2
     TimeStep = 0.001 # The period of time used as the steps in the Euler Approximations for the motion calculations. 0.001 was used as a very small time step to create low error in the approximation within every calculation.
-    TurnLength = 0.3 # The period of each "turn." Turns constitute the time after a button is pressed (w, a, s, or d)
+    TurnLength = 0.3 # The period of each "turn." Turns constitute the time after a button is pressed (w, a, s, or d). This value can be changed to make the game easier or harder/impossible
     PixelsPerMeter = 8 # The number of pixels in each meter of space
     Xo = SCREEN_WIDTH/2 # The x position of the origin point of the calculations in the coordinate system of the screen in pixels. The screen has an origin point at the top left corner, x increasing to the right, and y down the screen.
     Yo = SCREEN_HEIGHT - 100 # "    " The same as above but with y. We placed it at 100 pixels above the bottom to have enough visible space to be comfortable, but not so much that the initial position was off the screen.
@@ -172,7 +172,7 @@ while Retry:
             delXt += MotionX(Vxt, 0, TimeStep, Mass, 0) # These statements set delXt and delYt equal to the the sum of themselves and the motion functions given the velocity at that time step, the length of the time step, and the current mass. The 0s are for thrust and burnrate, which are only needed in the function if you are thrusting (which the trajectory does not account for intentionally)
             delYt += MotionY(Vyt, 0, TimeStep, Mass, 0) # as stated before, both delYt and delXt are measured in pixels as float values
             if abs(delXt)>=1: # if either delX or delY are at or above 1 pixel in the size of the displacement, the ship is moved on the screen. This makes the ship's position on the screen an approximation, but because pixels exist, this is necessary. In the trajectory calculations, this same method is used to track the placement of the markers, since they must also be placed at integer locations on the screen (the game would break if you placed them based on a float)
-                Trajector += [-math.floor(delXt),0] # every time the if statement is passed, the trajector vector is altered by the floor of the value of delXt (or delYt in the delYt if statement). This makes it so that the trajector vector is always at integer values so that it does not cause errors.
+                Trajector += [-math.floor(delXt),0] # every time the if statement is passed, the trajector vector is altered by the floor of the value of delXt (or delYt in the delYt if statement). This makes it so that the trajector vector is always at integer values so that it does not cause errors. Both the delX and delY shif are negative because of the coordinate system we chose. All the math works out.
                 delXt = delXt - math.floor(delXt) # to keep consistant, the delXt and delYt variables have whatever value is not large enough to change the position on the screen saved. This makes it so that the information is not lost during the calculations. Even if it is small during each step, with hundreds (or thousands) of steps, the information adds up quite a lot.
             if abs(delYt)>=1: # This statement is the same as the last one but with delYt
                 Trajector += [0,-math.floor(delYt)]
@@ -187,38 +187,36 @@ while Retry:
             if key[pg.K_s] == True: # if s is pressed, this statement activates. This constitutes a turn (0.3 seconds).
                 Burn = True # Burn is set to true so that the first idle frame is skipped on the next turn (purely visual as explained earlier)
                 LoopBuddy = 0 # LoopBuddy is set to zero to start the while loop fresh
-                while LoopBuddy < TurnLength:  # This works the same as the trajectory calculation, but here, only 300 calculations are made, coresponding to       
-                    #S key should rotate the engine to face DOWN
-                    delX += MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate)
+                while LoopBuddy < TurnLength:  # This works the same as the trajectory calculation, but here, only 300 calculations are made, coresponding to a turn length of 0.3 seconds.   
+                    delX += MotionX(Vx, 0, TimeStep, Mass, -1*BurnRate) # This works just as with the trajectory calculations except thrust is given in the y direction, and the burnrate is applied.
                     delY += MotionY(Vy, Thrust, TimeStep, Mass, -1*BurnRate)
-                    if abs(delX)>=1:
-                        shiprect.move_ip(-math.floor(delX),0)
-                        CurrentPos += [-math.floor(delX),0]
-                        delX = delX - math.floor(delX)
+                    if abs(delX)>=1: # As with the trajectory calculations, these two if statements only allow visual position changes in 1 pixel intervals (or more, if you are going fast enough to have the approximation be off by over a pixel, which should never happen in this game)
+                        shiprect.move_ip(-math.floor(delX),0) # This function moves the ship according to delX at descrete pixel values
+                        CurrentPos += [-math.floor(delX),0] # here, we update the current position vector with the number of pixels that were shifted
+                        delX = delX - math.floor(delX) # here, we assign delX to be the difference between the actual value of delX and the number of pixels shifted so that no data is lost
                     if abs(delY)>=1:
                         shiprect.move_ip(0,-math.floor(delY))
                         CurrentPos += [0,-math.floor(delY)]
                         delY = delY - math.floor(delY)
-                    if Mass-DryMass>0:
-                        Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep
-                        Mass += -1*BurnRate*TimeStep
-                        if int(math.floor(LoopBuddy*120/3)) == round(LoopBuddy*120/3,3):
-                            update(BurnUpArt,math.floor(LoopBuddy*120/3)%5,0.025)
-                    elif int(math.floor(LoopBuddy*120/3)) == round(LoopBuddy*120/3,3):
-                        update(shipimage, 4, 0.025)
+                    if Mass-DryMass>0: # This statement makes it so that you cannot thrust if you don't have any fuel. When this is not true, s, d, and a all act the same way as the wait button, w.
+                        Vy = Vy + Thrust*TimeStep/Mass - g*TimeStep # update the y velocity based on gravity and thrust. The x velocity is constant for s.
+                        Mass += -1*BurnRate*TimeStep # update the mass based on the burn rate
+                        if int(math.floor(LoopBuddy*40)) == round(LoopBuddy*40,3): # This statement reduces the number of full updates made to the screen so that the game runs faster (purely visual and optimization). 40 was chosen arbitrarily to give a good speed and 11 frames of animation in the update function, which is enough to make it seemless to our eyes
+                            Cycle = update(BurnUpArt,Cycle,0.025) # We use the update function to update our screen and animate the ship. 0.025 was chosen for the time delay because it is a comfortable animation speed here.
                     else:
-                        Vy = Vy - g*TimeStep
-                    LoopBuddy += TimeStep   
-                Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
-                iteration += 1
+                        if int(math.floor(LoopBuddy*40)) == round(LoopBuddy*40,3): # This is the same as the if statement above, but is only activated if the ship is out of fuel, and the update should just be the ship falling with no burn animation
+                            update(shipimage, 4, 0.025) # 4 is chosen for the animation arbitrarily (it doesn't matter here)
+                        Vy = Vy - g*TimeStep # This is an alternative update to velocity when thrust is no longer available, and gravity is the only thing that effects Vy
+                    LoopBuddy += TimeStep   # count up by 1 step
+                Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3))) # This adds a marker to the path indicator at the current position of the ship (specifically at the middle of the image)
+                iteration += 1 # Increase the turn counter by 1, indicating you are moving on to the next turn
                 
-            # a is for thrust left    
+            # a is for thrust left. Allmost everythin in this is the same as the if statement for s, so we skip over most of the explanation that we went through in the s if statement
             if key[pg.K_a] == True:
                 Burn = True
                 LoopBuddy = 0
                 while LoopBuddy < TurnLength:
-                    #A key should rotate the engine to face RIGHT
-                    delX += MotionX(Vx, -1*Thrust, TimeStep, Mass, -1*BurnRate)
+                    delX += MotionX(Vx, -1*Thrust, TimeStep, Mass, -1*BurnRate) # Here as well as in the d if statement, thrust is applied horizontally. In this one, thrust is applied as a negative because of how we oriented our coordinates. 
                     delY += MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)
                     if abs(delX)>=1:
                         shiprect.move_ip(-math.floor(delX),0)
@@ -229,24 +227,23 @@ while Retry:
                         CurrentPos += [0,-math.floor(delY)]
                         delY = delY - math.floor(delY)
                     if Mass-DryMass>0:
-                        Vx = Vx - Thrust*TimeStep/Mass
+                        Vx = Vx - Thrust*TimeStep/Mass # Here and in the d if statement, Vx is effected by thrust, and thus is updated accordingly
                         Mass += -1*BurnRate*TimeStep
-                        if int(math.floor(LoopBuddy*120/3)) == round(LoopBuddy*120/3,3):
-                            update(BurnLeftArt,math.floor(LoopBuddy*120/3)%5,0.025)
-                    elif int(math.floor(LoopBuddy*120/3)) == round(LoopBuddy*120/3,3):
+                        if int(math.floor(LoopBuddy*40)) == round(LoopBuddy*40,3):
+                            Cycle = update(BurnLeftArt,Cycle,0.025)
+                    elif int(math.floor(LoopBuddy*40)) == round(LoopBuddy*40,3):
                         update(shipimage, 4, 0.025)
-                    Vy = Vy - g*TimeStep
+                    Vy = Vy - g*TimeStep # The velocity in the y is always changed by graivty.
                     LoopBuddy += TimeStep   
                 Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
                 iteration += 1
                 
-            # d is for thrust right
+            # d is for thrust right. As with the a if statement, we skip most of the explanation that has already been covered, since most things are the same.
             if key[pg.K_d] == True:
                 Burn = True
                 LoopBuddy = 0
                 while LoopBuddy < TurnLength:
-                    #D key should rotate the engine to face LEFT
-                    delX += MotionX(Vx, Thrust, TimeStep, Mass, -1*BurnRate)
+                    delX += MotionX(Vx, Thrust, TimeStep, Mass, -1*BurnRate) # Thrust is applied in the positive x direction here (based on the coordinate system that we used for the function)
                     delY += MotionY(Vy, 0, TimeStep, Mass, -1*BurnRate)
                     if abs(delX)>=1:
                         shiprect.move_ip(-math.floor(delX),0)
@@ -259,19 +256,20 @@ while Retry:
                     if Mass-DryMass>0:
                         Vx = Vx + Thrust*TimeStep/Mass
                         Mass += -1*BurnRate*TimeStep
-                        if int(math.floor(LoopBuddy*120/3)) == round(LoopBuddy*120/3,3):
-                            update(BurnRightArt,math.floor(LoopBuddy*120/3)%5,0.025)
-                    elif int(math.floor(LoopBuddy*120/3)) == round(LoopBuddy*120/3,3):
+                        if int(math.floor(LoopBuddy*40)) == round(LoopBuddy*40,3):
+                            Cycle = update(BurnRightArt,Cycle,0.025)
+                    elif int(math.floor(LoopBuddy*40)) == round(LoopBuddy*40,3):
                         update(shipimage, 4, 0.025)
                     Vy = Vy - g*TimeStep
                     LoopBuddy += TimeStep   
                 Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
                 iteration += 1
+                
+            # w is for wait. Most of this is also the same function as the previous three if statements, but it does not have any thrust, so it is more simple. As such, we again skip most of the explanations that have already been covered
             if key[pg.K_w] == True:
                 LoopBuddy = 0
                 while LoopBuddy < TurnLength:
-                    # W key should wait
-                    delX += MotionX(Vx, 0, TimeStep, Mass, 0)
+                    delX += MotionX(Vx, 0, TimeStep, Mass, 0) # as with the trajectory calculator, no thrust is applied
                     delY += MotionY(Vy, 0, TimeStep, Mass, 0)
                     if abs(delX)>=1:
                         shiprect.move_ip(-math.floor(delX),0)
@@ -281,24 +279,25 @@ while Retry:
                         shiprect.move_ip(0,-math.floor(delY))
                         CurrentPos += [0,-math.floor(delY)]
                         delY = delY - math.floor(delY)
-                        shipimage = pg.image.load(IdleArt).convert_alpha()
-                    if int(math.floor(LoopBuddy*120/3)) == round(LoopBuddy*120/3,3):
+                    if int(math.floor(LoopBuddy*40)) == round(LoopBuddy*40,3):
                         update(shipimage, 4, 0.025)
                     Vy = Vy - g*TimeStep
                     LoopBuddy += TimeStep   
                 Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3)))
                 iteration += 1
-            if endpos[0] - PixelsPerMeter<=CurrentPos[0]<=endpos[0] + PixelsPerMeter and endpos[1]+0.5*PixelsPerMeter>=(CurrentPos[1] + 50)>=endpos[1]-0.5*PixelsPerMeter and Playtime:
-                if np.sqrt(Vy**2+Vx**2) <= 1:
+                
+            # This if statement checks if you are at the win condition or at the surface of the moon.
+            if endpos[0] - PixelsPerMeter<=CurrentPos[0]<=endpos[0] + PixelsPerMeter and endpos[1]+0.5*PixelsPerMeter>=(CurrentPos[1] + 50)>=endpos[1]-0.5*PixelsPerMeter and Playtime: # the parameters here are based on the end position +/- 1 meter in the x and +/-0.5 meters in the y. Since the ship is treated as the upper left corner of it's image, the y condition is moved up by 50 so that it is at the ship's feet
+                if np.sqrt(Vy**2+Vx**2) <= 1: # If you are at the win condition (the platform), this if statement checks if your velocity (found as the sum of the squares of both x and y velocities) is low enough to land safely. Otherwise, you crash.
                     print("yay!! :)")
-                    end = 1
-                    Playtime = False
+                    end = 1 # ending 1 doesn nothing as of now, but was going to show an animation of a guy walking out of the space ship after landing
+                    Playtime = False # When any ending is achived, playtime is set to false so that the motion controls can no longer be accessed.
                 else:
                     print("You died :(")
-                    end = 2
+                    end = 2 # ending 2 is a crash, and starts the crash animation. This happens whenever you are going too fast, not just when you are on the landing platform
                     Playtime = False
-            elif CurrentPos[1]>=endpos[1]-50 and not endpos[0] - PixelsPerMeter<=CurrentPos[0]<=endpos[0] + PixelsPerMeter:
-                if np.sqrt(Vy**2+Vx**2) <= 1:
+            elif CurrentPos[1]>=endpos[1]-50 and not endpos[0] - PixelsPerMeter<=CurrentPos[0]<=endpos[0] + PixelsPerMeter: # This elif statment checks if you are at the surface of the moon. If you are, you lose whether you are landing at a safe speed or not. The exception here is if you are within the area of the platform, at which point, you may be lower than the surface (by 0.5 meter at most)
+                if np.sqrt(Vy**2+Vx**2) <= 1: # If you are outside the landing zone, you can land safely (Ignoring the craters in the art), but you still lose as you did not land in the right location
                     print("You lose >:(")
                     end = 3
                     Playtime = False
@@ -306,14 +305,16 @@ while Retry:
                     print("You died :(")
                     end = 2
                     Playtime = False
-        if end == 2:
+      
+        # This if statment runs through the death animation. Another if statement for end 1 and end 3 would have been created if we had animated them           
+        if end == 2: 
             Cycle = update(WreckArt,Cycle, 0.1)
+        # This for loop looks for the p and r keys being pressed. Once either is pressed, the run loop ends.
         for event in pg.event.get():
             if key[pg.K_p]:
                 run = False 
-                Retry = False
+                Retry = False # if p is pressed, both while loops that contain the game will end.
             if key[pg.K_r]:
-                run = False
-        pg.display.update()
+                run = False # This statment just ends the while loop that the game runs in, which means the restart loop is still going and the game starts over again.
     
-pg.quit()
+pg.quit() # if the restart loop ends, this closes the game window.
