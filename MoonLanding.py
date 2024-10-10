@@ -106,58 +106,58 @@ while Retry:
         pg.draw.rect(screen, (10,128,10), LandingZone) # draw the landing zone
         for i in range(0,iteration): # create a for loop to draw all of the path markers in their respective locations on the screen (iteration is set as a variable later)
             pg.draw.rect(screen, (128,0,0), Path[i])
-        if TrajectoryCheck: # if trajectory has been toggeled using the t butten, run through a for loop that draws the 90 points of the trajectory line
+        if TrajectoryCheck: # if trajectory has been toggeled using the t butten, run through a for loop that draws the 90 points of the trajectory line, showing you 30 wait actions into the future.
             for i in range(0,90):
                 pg.draw.rect(screen, (0,0,128), Trajectory[i])
-        if image != shipimage:
+        if image != shipimage: # This makes it so that the idle image for the ship can be used in this function along side the animated versions.
             screen.blit(pg.image.load(image[Cycle]), shiprect)
-        else:
-            screen.blit(shipimage, shiprect)
-        screen.blit(Velocity_Panel.render(f'Current Velocity: Vx = {-Vx:.3f}, Vy = {Vy:.3f}, V = {np.sqrt(Vx**2+Vy**2):.3f} m/s', False, (0, 128, 0)), (0,0))
-        screen.blit(Fuel_Panel.render(f'Fuel Mass: {Mass-DryMass:.2f} kg', False, (0, 128, 0)), (0,30))
-        Cycle += 1
-        if Cycle >= 5:
+        else: # if I loaded the ship image with a Cycle, it would break the game, since it is a single value, not an array.
+            screen.blit(image, shiprect)
+        screen.blit(Velocity_Panel.render(f'Current Velocity: Vx = {-Vx:.3f}, Vy = {Vy:.3f}, V = {np.sqrt(Vx**2+Vy**2):.3f} m/s', False, (0, 128, 0)), (0,0)) # Draw the velocity pannel with the current velocity values
+        screen.blit(Fuel_Panel.render(f'Fuel Mass: {Mass-DryMass:.2f} kg', False, (0, 128, 0)), (0,30)) # Draw the fuel pannel with the current fuel mass values
+        Cycle += 1 # increase the cycle value (used for the death animation at the end)
+        if Cycle >= 5: # reset the cycle if it reaches 5 (which is outside the range for any of our animations)
             Cycle = 0
-        
-        pg.display.update()
-        t.sleep(ts)
-        return Cycle
+        pg.display.update() # Update the screen
+        t.sleep(ts) # tell the system to wait for a period of time specified in the call of the function (this allows us to make the game run at whatever rate we want with zero being the fastest)
+        return Cycle # Return the cycle value
     
         
-    # Create an ending Variable
+    # Create an ending Variable, used to determine which ending was achieved
     end = 0
     
-    TrajectoryCheck = False
-    Trajectory = np.zeros(90)
-    Trajectory = Trajectory.tolist()
+    # Create variables for the trajectory tracker
+    TrajectoryCheck = False # Create a checker to see if trajectory has been toggeled
+    Trajectory = [0]*90 # Create a list of 90 values, which will be filled with the 2 by 2 squares that make up the trajectory line. These values also carry the position values for these trajectory markers
     
-    LoopBuddy = 0
-    iteration = 1
+    
+    LoopBuddy = 0 # LoopBuddy tracks the time intervals in the euler approximations
+    iteration = 1 # iteration tells you what turn you are on. This is used for placing the path markers
     
     # Create x and y positional change variables
     delX = 0
     delY = 0
     
-    Burn = False
+    Burn = False # Burn is used to get rid of the 1 frame of idle animation between turns if you keep holding a, s, or d
     
-    run = True
-    Playtime = True
-    while run:
+    run = True # This is used to tell the game to run (pretty self explanitory by the name). If this is set to false, the while loop that the game runs in will end.
+    Playtime = True # This is true as long as you have not won or lost, and allows you to access movement controls.
+    while run: # This is the while loop that the game runs in.
         
         
-        if end != 2:
-            if Burn:
+        if end != 2: # 2 is the only of the three endings where the crash animation is active, at which point I do not want to update the screen with the normal ship image
+            if Burn: # this gets rid of 1 frame of update (only visual) if you used a thrust command, so that if you are holding a, s, or d, the transition between turns is a seemless animation. (it just looks nicer)
                 Burn = False
             else:
-                update(shipimage, 4, 0)
+                update(shipimage, 4, 0) # Update the ship frame
     
-        key = pg.key.get_pressed()
-        if key[pg.K_t]:
-            if TrajectoryCheck:
+        key = pg.key.get_pressed() # This looks for keypresses
+        if key[pg.K_t]: # If t is pressed, the trajectory tracker is activated
+            if TrajectoryCheck: # 
                 TrajectoryCheck = False
             else:
                 TrajectoryCheck = True
-            t.sleep(0.1)
+            t.sleep(0.15)
         LoopBuddy = 0
         Trajector = np.array([CurrentPos[0],CurrentPos[1]])
         delXt = delX
