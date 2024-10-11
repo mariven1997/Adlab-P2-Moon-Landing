@@ -3,20 +3,12 @@ import pygame as pg # Pygame is needed to create the game itself, not for any of
 import numpy as np # Numpy is needed for many of the calculations
 import time as t # Time is used very little, but improves the look of some of the animations by making them take longer
 import math # Math is used for some of the calculations
-#TODO
-# Stop thrust when fuel is empty
-# Detect Hitting the Ground
-# Aesthetics
-# The line plotty thing
-# Fuel Monitor
-# Desired Landing Site
-#
 
 
 Retry = True # Retry is a boolian function that allows the game to repeat when r is pressed, but end when p is pressed
 while Retry:
     
-    # Import all of the various moon lander images (used to animate the player's moon lander module)
+    # Assign sprite file names to a list, referenced later to import image files (used to animate the player's moon lander module)
     BurnRightArt = ["R1.png", "R2.png", "R3.png", "R4.png", "R5.png"]
     BurnLeftArt = ["L1.png", "L2.png", "L3.png", "L4.png", "L5.png"]
     BurnUpArt = ["V1.png", "V2.png", "V3.png", "V4.png", "V5.png"]
@@ -48,7 +40,7 @@ while Retry:
     Yo = SCREEN_HEIGHT - 100 # "    " The same as above but with y. We placed it at 100 pixels above the bottom to have enough visible space to be comfortable, but not so much that the initial position was off the screen.
     Mass = DryMass + FMass # Total initial mass, kg
     endpos = np.array([Xo+10*PixelsPerMeter,Yo]) # This is a vector that tells the computer the end position as a function of the Xo and the Yo, as well as the intended landing position (10 meters) multiplied by pixels per meter to scale the displacement to the correct size.
-    ShipHeight = 54  # The height of the physical body of the ship, pixels
+    ShipHeight = 54  # The height of the physical body of the ship, pixels - this is needed in part because the ship sprites include empty texture to incorporate thruster graphics, so the image is significantly larger than the ship itself
     ShipWidth = 34  # The width of the physical body of the ship, pixels
     
     
@@ -58,7 +50,7 @@ while Retry:
     background.topleft = (0,0) # Create a position for the background (just at the top left corner)
     
     # Create the moon
-    moonimg = pg.image.load('Moonscape.png') # Import the image of the moon's surface (thank you Kamryn)
+    moonimg = pg.image.load('Moonscape.png') # Import the image of the moon's surface (thank you Kamryn) You're very welcome Mace
     moon = moonimg.get_rect() # Create a rectangle equal to the image size
     moon.topleft = (0,600) # Create a position for the moon image. This is 250 pixels above the bottom of the screen, since the image is 250 pixels tall.
     
@@ -84,7 +76,7 @@ while Retry:
     
     # Defining Position Functions, dM should be negative
     def MotionX(vX, ThrustX, dT, Mass, dM):
-        deltaX = PixelsPerMeter*((vX*dT)+(ThrustX*(dT**2))/(2*(Mass+(dM*TimeStep/2)))) # define an equation for a change of position for dT (0.001 seconds). Based on the equation for position in kinimatics (x = x0 + v0t + 1/2*at^2). For the Euler approximation, this is changed up to the current equation, where x0 = 0, v0 = the velocity at the start of the 0.001 seconds, and a is determined by thrust (if used)
+        deltaX = PixelsPerMeter*((vX*dT)+(ThrustX*(dT**2))/(2*(Mass+(dM*TimeStep/2)))) # define an equation for a change of position for dT (0.001 seconds). Based on the equation for position in kinematics (x = x0 + v0t + 1/2*at^2). For the Euler approximation, this is changed up to the current equation, where x0 = 0, v0 = the velocity at the start of the 0.001 seconds, and a is determined by thrust (if used)
         return deltaX # return the value of the change
     def MotionY(vY, ThrustY, dT, Mass, dM):
         deltaY = PixelsPerMeter*((vY*dT)+((ThrustY*(dT**2))/(2*(Mass+(dM*TimeStep/2))))-(g*(dT**2)/2)) # This is the same as the x motion equation except with an additional subtraction based on gravity (which will always effect the change in y)
@@ -115,7 +107,7 @@ while Retry:
             screen.blit(image, shiprect)
         screen.blit(Velocity_Panel.render(f'Current Velocity: Vx = {-Vx:.3f}, Vy = {Vy:.3f}, V = {np.sqrt(Vx**2+Vy**2):.3f} m/s', False, (0, 128, 0)), (0,0)) # Draw the velocity pannel with the current velocity values
         screen.blit(Fuel_Panel.render(f'Fuel Mass: {Mass-DryMass:.2f} kg', False, (0, 128, 0)), (0,30)) # Draw the fuel pannel with the current fuel mass values
-        Cycle += 1 # increase the cycle value (used for the death animation at the end)
+        Cycle += 1 # increase the cycle value (cycles whatever animation is being used to the next frame)
         if Cycle >= 5: # reset the cycle if it reaches 5 (which is outside the range for any of our animations)
             Cycle = 0
         pg.display.update() # Update the screen
@@ -160,7 +152,7 @@ while Retry:
             t.sleep(0.15) # This time delay is put in so that if t is pressed, the game does not read the input multiple times. This could have been done better in other ways, but this way works well enough and does not impact the game or calculations, so we chose the easier solution
         
         # The trajectory is calculated every time the game loops through. It is low intensity, so it does not slow down the game (now that we optimised it)
-        LoopBuddy = 0 # Loop budy is set to zero to start the process of the while loop that comes later
+        LoopBuddy = 0 # Loop buddy is set to zero to start the process of the while loop that comes later
         Trajector = np.array([CurrentPos[0],CurrentPos[1]]) # Trajector is an array that is used in calculating the trajectory. It is set to the current value of the CurrentPos vector. We could not have set it equal to the vector itself because when we did, the CurrentPos vector was also adjusted, which was not expected
         delXt = delX # delXt and delYt are values that are used as small displacements for the euler approximation used in the trajectory calculator. They are set to the values of delX and delY because delX and delY are not fully used every time the ship moves. This is because the ship cannot move between pixels, and so we only use the displacement values of delX and delY when they are above 1, after which the displacement is subtracted from the delX or delY. This way, no information is lost because of pixel size being discrete. delX and delY are both measured in pixels.
         delYt = delY
@@ -211,7 +203,7 @@ while Retry:
                 Path.append(pg.Rect((CurrentPos[0] + 0.5*ShipWidth,CurrentPos[1] + 0.5*ShipHeight, 3,3))) # This adds a marker to the path indicator at the current position of the ship (specifically at the middle of the image)
                 iteration += 1 # Increase the turn counter by 1, indicating you are moving on to the next turn
                 
-            # a is for thrust left. Allmost everythin in this is the same as the if statement for s, so we skip over most of the explanation that we went through in the s if statement
+            # a is for thrust left. Almost everything in this is the same as the if statement for s, so we skip over most of the explanation that we went through in the s if statement
             if key[pg.K_a] == True:
                 Burn = True
                 LoopBuddy = 0
@@ -288,9 +280,9 @@ while Retry:
                 
             # This if statement checks if you are at the win condition or at the surface of the moon.
             if endpos[0] - PixelsPerMeter<=CurrentPos[0]<=endpos[0] + PixelsPerMeter and endpos[1]+0.5*PixelsPerMeter>=(CurrentPos[1] + 50)>=endpos[1]-0.5*PixelsPerMeter and Playtime: # the parameters here are based on the end position +/- 1 meter in the x and +/-0.5 meters in the y. Since the ship is treated as the upper left corner of it's image, the y condition is moved up by 50 so that it is at the ship's feet
-                if np.sqrt(Vy**2+Vx**2) <= 1: # If you are at the win condition (the platform), this if statement checks if your velocity (found as the sum of the squares of both x and y velocities) is low enough to land safely. Otherwise, you crash.
+                if np.sqrt(Vy**2+Vx**2) <= 1: # If you are at the win condition (the platform), this if statement checks if your velocity (found as the root of the sum of the squares of both x and y velocities) is low enough to land safely. Otherwise, you crash.
                     print("yay!! :)")
-                    end = 1 # ending 1 doesn nothing as of now, but was going to show an animation of a guy walking out of the space ship after landing
+                    end = 1 # ending 1 does nothing as of now, but was going to show an animation of a guy walking out of the space ship after landing. That would have been a far more complex and time consuming animation than the others, and was therefore not ready
                     Playtime = False # When any ending is achived, playtime is set to false so that the motion controls can no longer be accessed.
                 else:
                     print("You died :(")
